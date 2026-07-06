@@ -1,0 +1,23 @@
+{
+  "name": "trucxpress-site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:41729/git/moawiakhan713-env/trucxpress-site"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
+    "gsap": "^3.15.0",
+    "playwright-core": "^1.61.1",
+    "three": "^0.185.1"
+  }
+}
