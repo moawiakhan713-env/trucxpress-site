@@ -35,7 +35,7 @@
   </header>
 
   <!-- ================= HERO ================= -->
-  <section class="hero">
+  <section class="hero" data-cinematic>
     <div class="hero-canvas" id="hero-canvas" aria-hidden="true"></div>
     <div class="hero-fade"></div>
     <div class="container">
@@ -54,6 +54,21 @@
           <div class="stat-chip"><div class="num">100<span class="suffix">%</span></div><div class="lbl">Commission-only</div></div>
           <div class="stat-chip"><div class="num">24<span class="suffix">/7</span></div><div class="lbl">Tech &amp; support</div></div>
         </div>
+      </div>
+    </div>
+    <div class="hero-phase p2">
+      <div>
+        <h2>Where Logistics <span class="grad">Meets Reliability</span></h2>
+        <p>Precision, speed and trust — from dispatch to delivery, we connect the dots effortlessly.</p>
+      </div>
+    </div>
+    <div class="hero-phase p3">
+      <div>
+        <h2>Stay Loaded. <span class="grad">Stay Supported.</span></h2>
+        <p>Commission-only dispatch. No upfront fees. No forced loads. No wasted time.</p>
+        <a href="contact.html" class="btn btn-primary">Get Dispatched Today
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
       </div>
     </div>
     <div class="scroll-hint"><span class="wheel"></span>Scroll</div>
@@ -333,9 +348,10 @@
   <script src="assets/js/main.js"></script>
   <script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
   <script type="module">
-    import { initHighwayScene, initCargoScene } from './assets/js/scene.js';
+    import { initCargoScene } from './assets/js/scene.js';
+    import { initCinematicHero } from './assets/js/hero-cinematic.js';
     import { initRobot } from './assets/js/robot.js';
-    try { initHighwayScene(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
+    try { initCinematicHero(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
     try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
     if (window.matchMedia('(min-width: 1251px)').matches) {
       try { initRobot(document.getElementById('robot-side')); } catch (e) { console.warn('WebGL robot disabled:', e); }

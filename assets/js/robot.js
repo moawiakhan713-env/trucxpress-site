@@ -299,7 +299,7 @@ export function initRobot(container) {
     const t = p * ZIGS;
     const tri = 2 * Math.abs(t - Math.floor(t + 0.5));   // 1..0..1 per segment
     target.x = (tri * 2 - 1) * X_AMP;
-    target.y = Math.cos(p * Math.PI * ZIGS) * Y_AMP - 0.15;
+    target.y = -Math.cos(p * Math.PI * ZIGS) * Y_AMP - 0.3;
     return p;
   }
 

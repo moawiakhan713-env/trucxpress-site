@@ -273,6 +273,23 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
   100% { transform: translateY(0); opacity: 0; }
 }
 
+/* ---- Cinematic hero phase overlays ---- */
+.hero-phase {
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center; text-align: center;
+  padding: 0 24px;
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.hero-phase h2 {
+  font-size: clamp(2.2rem, 5.5vw, 4.4rem); font-weight: 700; max-width: 900px;
+  text-shadow: 0 6px 46px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+.hero-phase p {
+  margin-top: 16px; font-size: clamp(1rem, 1.6vw, 1.2rem);
+  color: #ffe9c9; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+}
+.hero-phase .btn { pointer-events: auto; margin-top: 30px; }
+
 /* ---- Page hero (inner pages) ---- */
 .page-hero { position: relative; padding: calc(var(--nav-h) + 110px) 0 90px; overflow: hidden; }
 .page-hero .hero-canvas { opacity: 0.85; }

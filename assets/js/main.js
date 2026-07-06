@@ -103,6 +103,29 @@
       );
     });
 
+    // cinematic pinned hero: scrub progress feeds the 3D scene via
+    // window.__heroP; text phases crossfade along the same timeline
+    const cine = document.querySelector('.hero[data-cinematic]');
+    if (cine) {
+      window.__heroP = 0;
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: cine,
+          start: 'top top',
+          end: '+=280%',
+          scrub: 0.7,
+          pin: true,
+          onUpdate: (self) => { window.__heroP = self.progress; },
+        },
+      });
+      tl.to('.hero .scroll-hint', { autoAlpha: 0, duration: 0.05 }, 0.03)
+        .to('.hero-content', { autoAlpha: 0, y: -90, ease: 'power1.in', duration: 0.16 }, 0.06)
+        .fromTo('.hero-phase.p2', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.13, ease: 'power2.out' }, 0.28)
+        .to('.hero-phase.p2', { autoAlpha: 0, y: -70, duration: 0.11, ease: 'power1.in' }, 0.5)
+        .fromTo('.hero-phase.p3', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.13, ease: 'power2.out' }, 0.68)
+        .to('.hero-phase.p3', { autoAlpha: 0, duration: 0.09 }, 0.93);
+    }
+
     // parallax drift on decorated elements
     document.querySelectorAll('[data-parallax]').forEach((el) => {
       const depth = parseFloat(el.dataset.parallax) || 0.15;
