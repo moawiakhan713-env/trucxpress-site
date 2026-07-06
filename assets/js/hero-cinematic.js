@@ -11,6 +11,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import { GLTFLoader } from '../vendor/GLTFLoader.js';
+import { DRACOLoader } from '../vendor/DRACOLoader.js';
 
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -94,9 +95,15 @@ function contactShadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-/* ---------- procedural semi (fallback when no GLB) ---------- */
+/* ---------- procedural semi (tractor is swapped for the GLB) ---------- */
 function buildTruck(env) {
   const truck = new THREE.Group();
+  const trailerG = new THREE.Group();
+  const tractor = new THREE.Group();
+  tractor.position.x = 4.15;
+  truck.add(trailerG, tractor);
+  const tractorWheels = [];
+  const trailerWheels = [];
 
   const paint = new THREE.MeshStandardMaterial({ color: 0x16233c, roughness: 0.32, metalness: 0.75, envMapIntensity: 1.0 });
   const darkTrim = new THREE.MeshStandardMaterial({ color: 0x0b0e15, roughness: 0.55, metalness: 0.6, envMapIntensity: 0.6 });
@@ -117,15 +124,15 @@ function buildTruck(env) {
   );
   trailer.position.set(-1.6, 1.62 + TH / 2 - 1.05, 0);
   trailer.position.y = 1.05 + TH / 2;
-  truck.add(trailer);
+  trailerG.add(trailer);
 
   // side skirts + underride
   const skirt = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.55, TW - 0.2), darkTrim);
   skirt.position.set(-2.2, 0.78, 0);
-  truck.add(skirt);
+  trailerG.add(skirt);
   const rearBar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.5, TW - 0.5), darkTrim);
   rearBar.position.set(-6.75, 0.55, 0);
-  truck.add(rearBar);
+  trailerG.add(rearBar);
 
   // marker lights on trailer edge
   const marker = new THREE.MeshBasicMaterial({ color: 0xffb31a });
@@ -134,15 +141,11 @@ function buildTruck(env) {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(0.09, 0.05), marker);
       m.position.set(-6.2 + i * 1.85, 1.18, z);
       m.rotation.y = z > 0 ? 0 : Math.PI;
-      truck.add(m);
+      trailerG.add(m);
     }
   }
 
   /* ----- tractor (front at +X) ----- */
-  const tractor = new THREE.Group();
-  tractor.position.x = 4.15;
-  truck.add(tractor);
-
   // frame
   const frame = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.32, 1.05), darkTrim);
   frame.position.set(-0.4, 0.72, 0);
@@ -217,8 +220,7 @@ function buildTruck(env) {
   }
 
   /* ----- wheels ----- */
-  const wheels = [];
-  function wheel(x, dual) {
+  function wheel(x, dual, group, list) {
     for (const zs of dual ? [0.78, -0.78] : [0.85, -0.85]) {
       const wg = new THREE.Group();
       const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.53, 0.53, dual ? 0.62 : 0.42, 28), tireMat);
@@ -227,13 +229,18 @@ function buildTruck(env) {
       hub.rotation.x = Math.PI / 2;
       wg.add(tire, hub);
       wg.position.set(x, 0.53, zs);
-      truck.add(wg);
-      wheels.push(wg);
+      group.add(wg);
+      list.push(wg);
     }
   }
-  wheel(6.1, false);                    // steer
-  wheel(3.05, true); wheel(2.0, true);  // drive tandem
-  wheel(-5.3, true); wheel(-6.35, true);// trailer tandem
+  // tractor wheels live in world-truck coords, so park them in a holder
+  const tractorRolling = new THREE.Group();
+  truck.add(tractorRolling);
+  wheel(6.1, false, tractorRolling, tractorWheels);                       // steer
+  wheel(3.05, true, tractorRolling, tractorWheels);
+  wheel(2.0, true, tractorRolling, tractorWheels);                        // drive tandem
+  wheel(-5.3, true, trailerG, trailerWheels);
+  wheel(-6.35, true, trailerG, trailerWheels);                            // trailer tandem
 
   // taillights
   const tail = new THREE.MeshBasicMaterial({ color: 0xff2d2d });
@@ -241,33 +248,48 @@ function buildTruck(env) {
     const t = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.22), tail);
     t.position.set(-6.81, 1.3, z);
     t.rotation.y = -Math.PI / 2;
-    truck.add(t);
+    trailerG.add(t);
   }
 
-  return { truck, wheels, headlights };
+  return { truck, tractor, tractorRolling, trailerWheels, tractorWheels, headlights };
 }
 
-/* ---------- optional photoreal GLB ---------- */
-function tryLoadGlb(url) {
+/* ---------- photoreal tractor GLB (assets/models/truck.glb) ---------- */
+const GLB_ROT_Y = Math.PI / 2;   // extra yaw if the model faces the wrong way
+const GLB_LENGTH = 5.6;          // target tractor length in scene units
+const GLB_REAR_X = 0.9;          // where the tractor's rear lands (under trailer nose)
+
+function loadTractorGlb(url) {
   return fetch(url, { method: 'HEAD' })
     .then((r) => {
       if (!r.ok) throw 0;
-      return new Promise((resolve, reject) => new GLTFLoader().load(url, resolve, undefined, reject));
+      const draco = new DRACOLoader().setDecoderPath('assets/vendor/draco/gltf/');
+      const loader = new GLTFLoader().setDRACOLoader(draco);
+      return new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject));
     })
     .then((gltf) => {
       const model = gltf.scene;
-      // normalize: longest axis -> X, length ~13.4, wheels on ground
+      const holder = new THREE.Group();
+      holder.add(model);
+      // longest horizontal axis -> X
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
-      if (size.z > size.x) model.rotation.y = Math.PI / 2;
+      if (size.z > size.x) model.rotation.y = GLB_ROT_Y;
+      // scale to tractor length
       const box2 = new THREE.Box3().setFromObject(model);
       const s2 = box2.getSize(new THREE.Vector3());
-      const scale = 13.4 / Math.max(s2.x, s2.z);
+      const scale = GLB_LENGTH / Math.max(s2.x, s2.z);
       model.scale.setScalar(scale);
+      // ground it and park its rear at the trailer nose
       const box3 = new THREE.Box3().setFromObject(model);
       model.position.y -= box3.min.y;
-      model.position.x -= (box3.min.x + box3.max.x) / 2;
-      return model;
+      model.position.x -= box3.min.x - GLB_REAR_X;
+      model.traverse((o) => {
+        if (o.isMesh && o.material) {
+          o.material.envMapIntensity = 1.1;
+        }
+      });
+      return holder;
     });
 }
 
@@ -360,18 +382,17 @@ export function initCinematicHero(container) {
   /* ---- truck (GLB if provided, else procedural) ---- */
   const rig = new THREE.Group();
   scene.add(rig);
-  let wheels = [], headlights = [];
   const proc = buildTruck();
   rig.add(proc.truck);
-  wheels = proc.wheels;
-  headlights = proc.headlights;
+  let wheels = [...proc.trailerWheels, ...proc.tractorWheels];
 
-  tryLoadGlb('assets/models/truck.glb').then((model) => {
-    rig.remove(proc.truck);
-    rig.add(model);
-    wheels = [];
-    headlights = [];
-  }).catch(() => { /* keep procedural truck */ });
+  // photoreal tractor swap: keep the branded trailer, replace the cab
+  loadTractorGlb('assets/models/truck.glb').then((tractorModel) => {
+    proc.truck.remove(proc.tractor);
+    proc.truck.remove(proc.tractorRolling);
+    proc.truck.add(tractorModel);
+    wheels = [...proc.trailerWheels];
+  }).catch(() => { /* keep procedural tractor */ });
 
   /* ---- interaction ---- */
   const mouse = { x: 0, y: 0 };
@@ -390,7 +411,7 @@ export function initCinematicHero(container) {
 
   /* ---- camera poses ---- */
   const POSES = [
-    { pos: new THREE.Vector3(1.2, 2.7, 20.6), look: new THREE.Vector3(-3.1, 3.35, 0), fov: 33 }, // side profile, truck low-right
+    { pos: new THREE.Vector3(1.2, 2.7, 21.8), look: new THREE.Vector3(-2.0, 3.55, 0), fov: 33 }, // side profile, truck low-right
     { pos: new THREE.Vector3(11.6, 1.35, 9.0), look: new THREE.Vector3(4.6, 1.5, 0), fov: 30 }, // front 3/4 into the sun
     { pos: new THREE.Vector3(-6.5, 5.2, 10.5), look: new THREE.Vector3(4.0, 1.2, 0), fov: 40 }, // high rear as it departs
   ];

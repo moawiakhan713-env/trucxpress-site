@@ -15,3 +15,4 @@ Still open (search `TODO(content)` in the HTML):
 | Office hours | footers + contact | "Mon – Fri · 9 am – 7 pm" read from a blurry screenshot — confirm |
 | Logo | nav/footer | Recreated as SVG (`assets/img/logo-truck.svg` + italic silver wordmark) matching the brand logo; swap in the original raster file if pixel-exact fidelity is needed |
 | Blog | `blog.html` + 3 posts | Added with three starter articles written by the redesign (commission-only model, double-brokering red flags, deadhead reduction) — review/replace with your own posts as desired |
+| Truck model credit | `index.html` hero | Photoreal tractor GLB from Sketchfab (CC BY) is live — send me the model page URL/author name so I can add the required attribution |
