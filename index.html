@@ -11,6 +11,7 @@
 <body>
   <div class="page-glow"></div>
   <div class="grain"></div>
+  <div id="robot-side" aria-hidden="true"></div>
 
   <!-- ================= NAV ================= -->
   <header class="nav">
@@ -333,8 +334,12 @@
   <script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
   <script type="module">
     import { initHighwayScene, initCargoScene } from './assets/js/scene.js';
+    import { initRobot } from './assets/js/robot.js';
     try { initHighwayScene(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
     try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
+    if (window.matchMedia('(min-width: 1251px)').matches) {
+      try { initRobot(document.getElementById('robot-side')); } catch (e) { console.warn('WebGL robot disabled:', e); }
+    }
   </script>
 </body>
 </html>
