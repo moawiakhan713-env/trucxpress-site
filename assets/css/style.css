@@ -146,6 +146,14 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
   color: #14100a;
 }
 .logo em { font-style: normal; color: var(--amber); }
+.logo .logo-truck { height: 40px; width: auto; flex: none; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5)); }
+.logo .logo-script {
+  font-style: italic; font-weight: 700; letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #ffffff 30%, #9fadc2 55%, #dfe6f0 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+.footer .logo .logo-truck { height: 46px; }
 .nav-links { display: flex; align-items: center; gap: 34px; font-weight: 500; font-size: 0.95rem; }
 .nav-links a { position: relative; color: var(--text-mid); transition: color 0.25s; padding: 6px 0; }
 .nav-links a::after {
@@ -489,6 +497,43 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
   box-shadow: 0 0 0 3px rgba(255, 179, 26, 0.15);
 }
 .field textarea { min-height: 120px; resize: vertical; }
+
+/* ---- Blog ---- */
+.post-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.post-card .post-art {
+  height: 170px; display: grid; place-items: center; color: var(--amber);
+  background:
+    radial-gradient(120% 140% at 20% 0%, rgba(255, 179, 26, 0.14), transparent 55%),
+    radial-gradient(120% 140% at 85% 100%, rgba(55, 213, 255, 0.12), transparent 55%),
+    var(--bg-2);
+  border-bottom: 1px solid var(--stroke);
+}
+.post-card .post-body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.post-meta { display: flex; gap: 14px; align-items: center; font-size: 0.78rem; color: var(--text-lo); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.post-meta .tag { color: var(--cyan); border: 1px solid rgba(55, 213, 255, 0.35); padding: 3px 10px; border-radius: 999px; }
+.post-card h3 { font-size: 1.18rem; }
+.post-card p { color: var(--text-mid); font-size: 0.93rem; flex: 1; }
+.read-more { color: var(--amber); font-weight: 600; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px; }
+.read-more svg { transition: transform 0.25s var(--ease-out); }
+.post-card:hover .read-more svg { transform: translateX(4px); }
+
+/* ---- Article ---- */
+.article { max-width: 760px; margin-inline: auto; }
+.article .post-meta { margin-bottom: 18px; }
+.article h1 { font-size: clamp(2rem, 4.4vw, 3.1rem); margin-bottom: 22px; }
+.article .lede { font-size: 1.12rem; color: var(--text-mid); margin-bottom: 40px; }
+.article h2 { font-size: 1.5rem; margin: 40px 0 14px; }
+.article p { color: var(--text-mid); margin-bottom: 18px; }
+.article strong { color: var(--text-hi); }
+.article ul, .article ol { margin: 0 0 18px 22px; color: var(--text-mid); display: grid; gap: 8px; }
+.article ul { list-style: none; margin-left: 0; }
+.article ul li { position: relative; padding-left: 22px; }
+.article ul li::before {
+  content: ''; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 3px;
+  background: linear-gradient(135deg, var(--amber), #ff8a00);
+}
+.article .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-lo); font-size: 0.9rem; margin-bottom: 26px; transition: color 0.25s; }
+.article .back-link:hover { color: var(--amber); }
 
 /* ---- Service card bullet lists ---- */
 .svc-list { margin-top: 16px; display: grid; gap: 10px; }

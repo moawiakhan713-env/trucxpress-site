@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 64">
+  <defs>
+    <linearGradient id="trailer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d7dfea"/>
+      <stop offset="1" stop-color="#8e9cb0"/>
+    </linearGradient>
+    <linearGradient id="cab" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b4a5e"/>
+      <stop offset="0.55" stop-color="#1b2431"/>
+      <stop offset="1" stop-color="#0d121b"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef2f7"/>
+      <stop offset="0.5" stop-color="#aeb9c9"/>
+      <stop offset="1" stop-color="#e6ebf2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- speed lines -->
+  <g stroke="#93a3ba" stroke-width="2.6" stroke-linecap="round" opacity="0.85">
+    <line x1="2"  y1="16" x2="26" y2="16"/>
+    <line x1="8"  y1="24" x2="24" y2="24"/>
+    <line x1="1"  y1="32" x2="22" y2="32"/>
+    <line x1="9"  y1="40" x2="24" y2="40"/>
+  </g>
+
+  <!-- trailer -->
+  <rect x="26" y="9" width="60" height="35" rx="2.5" fill="url(#trailer)" stroke="#101722" stroke-width="2.4"/>
+  <g stroke="#5f6f85" stroke-width="1.4" opacity="0.7">
+    <line x1="30" y1="16" x2="82" y2="16"/>
+    <line x1="30" y1="22" x2="82" y2="22"/>
+    <line x1="30" y1="28" x2="82" y2="28"/>
+    <line x1="30" y1="34" x2="82" y2="34"/>
+  </g>
+
+  <!-- chassis -->
+  <rect x="26" y="44" width="102" height="4" rx="1.5" fill="#0d121b"/>
+  <rect x="88" y="40" width="22" height="6" rx="1.5" fill="#131a26"/>
+
+  <!-- exhaust stacks -->
+  <rect x="88.5" y="1" width="3.6" height="12" rx="1.6" fill="url(#chrome)" stroke="#101722" stroke-width="1"/>
+  <rect x="107" y="1" width="3.6" height="12" rx="1.6" fill="url(#chrome)" stroke="#101722" stroke-width="1"/>
+
+  <!-- sleeper + cab -->
+  <path d="M87 8 h22 a3 3 0 0 1 3 3 v33 h-25 a3 3 0 0 1 -3 -3 V11 a3 3 0 0 1 3 -3 z" fill="url(#cab)" stroke="#101722" stroke-width="2.4"/>
+  <!-- roof fairing -->
+  <path d="M87 8 q11 -5 25 -2 l0 5 q-13 -4 -25 -3 z" fill="#1b2431" stroke="#101722" stroke-width="1.6"/>
+  <!-- windshield + door glass -->
+  <path d="M112 13 l11 5.5 V25 h-11 z" fill="#54677d" stroke="#101722" stroke-width="1.6"/>
+  <!-- hood -->
+  <path d="M112 25 h14 a4 4 0 0 1 4 4 v10 a3 3 0 0 1 -3 3 h-15 z" fill="url(#cab)" stroke="#101722" stroke-width="2.2"/>
+  <!-- door line + mirror -->
+  <line x1="112" y1="14" x2="112" y2="44" stroke="#101722" stroke-width="1.6"/>
+  <path d="M111 12 l-3 -4 h-2" fill="none" stroke="#101722" stroke-width="1.6"/>
+
+  <!-- grille + bumper -->
+  <rect x="127.5" y="29" width="5.5" height="11" rx="1" fill="url(#chrome)" stroke="#101722" stroke-width="1.2"/>
+  <g stroke="#38414f" stroke-width="1"><line x1="129.4" y1="30" x2="129.4" y2="39.6"/><line x1="131.4" y1="30" x2="131.4" y2="39.6"/></g>
+  <rect x="120" y="42" width="16" height="5" rx="2" fill="url(#chrome)" stroke="#101722" stroke-width="1.4"/>
+  <!-- headlight -->
+  <rect x="126.5" y="37.5" width="4.5" height="3" rx="1" fill="#ffd97a" stroke="#101722" stroke-width="0.8"/>
+
+  <!-- wheels -->
+  <g>
+    <g fill="#0c1119" stroke="#101722" stroke-width="1.6">
+      <circle cx="36" cy="49" r="8"/><circle cx="55" cy="49" r="8"/>
+      <circle cx="93" cy="49" r="8"/><circle cx="122" cy="49" r="8"/>
+    </g>
+    <g fill="url(#chrome)" stroke="#38414f" stroke-width="1">
+      <circle cx="36" cy="49" r="3.4"/><circle cx="55" cy="49" r="3.4"/>
+      <circle cx="93" cy="49" r="3.4"/><circle cx="122" cy="49" r="3.4"/>
+    </g>
+  </g>
+
+  <!-- ground -->
+  <line x1="20" y1="59" x2="136" y2="59" stroke="#66788f" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+</svg>
