@@ -150,10 +150,10 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const data = new FormData(form);
-      const subject = encodeURIComponent(`Dispatch inquiry from ${data.get('name') || 'website'}`);
+      const name = `${data.get('first_name') || ''} ${data.get('last_name') || ''}`.trim() || 'website';
+      const subject = encodeURIComponent(`Dispatch inquiry from ${name}`);
       const body = encodeURIComponent(
-        `Name: ${data.get('name')}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email')}\n` +
-        `Equipment: ${data.get('equipment')}\n\n${data.get('message')}`
+        `Name: ${name}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email')}\n\n${data.get('message')}`
       );
       window.location.href = `mailto:${form.dataset.email || 'info@trucxpress.com'}?subject=${subject}&body=${body}`;
     });

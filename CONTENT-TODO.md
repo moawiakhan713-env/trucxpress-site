@@ -1,19 +1,17 @@
-# Content placeholders to replace
+# Remaining content items
 
-The live trucxpress.com could not be fetched from this build environment, so the
-copy below was reconstructed from search-engine data. Replace these placeholders
-with the real content (search for `TODO(content)` in the HTML):
+Real content from the live site (screenshots provided 2026-07-06) is now in
+place: hero copy, founder quote, services with bullets, why-choose items,
+load types, offices (Phoenix + Mansehra), phone/email, FAQ, footer.
 
-| Item | Where | Current placeholder |
+Still open (search `TODO(content)` in the HTML):
+
+| Item | Where | Status |
 |---|---|---|
-| Phone number | `index.html` contact + all footers | `+1 (000) 000-0000` |
-| Email | `index.html` contact/form + all footers | `info@trucxpress.com` (guessed) |
-| Hero stats | `index.html` hero chips | 98% on-time, 500+ loads |
-| Stats band | `index.html` | 500+ loads, 120+ carriers, 48 states, 98% on-time |
-| Testimonials | `index.html` | 3 invented quotes marked "Placeholder" |
-| Social links | all footers | `#` |
-| Commission % | `our-services.html` pricing banner | not stated (kept generic) |
-| Logo | nav/footer | inline SVG truck mark (replace with real logo if desired) |
-
-Once the real Home / Services / About page text is provided, swap section copy
-to match verbatim where it differs.
+| Social profile URLs | footers + contact page | Icons shown (X, Facebook, Pinterest, Instagram) but links are `#` |
+| Testimonials | `about-us.html` Carrier Feedback | 3 invented quotes marked "Placeholder" — original carousel appeared empty |
+| FAQ answers 2–4 | `index.html` | Questions verbatim; answers written to match brand copy (Q1 answer is verbatim). Review wording. |
+| How-it-works steps 1–2 | `index.html` | Steps 3 "Start Dispatching" / 4 "Drive & Earn" read from screenshot; 1 "Sign Up" / 2 "Get Verified" inferred (blurred) |
+| Office hours | footers + contact | "Mon – Fri · 9 am – 7 pm" read from a blurry screenshot — confirm |
+| Logo | nav/footer | Stylized SVG truck mark used; to use the real TrucXpress logo, add the image file to `assets/img/` and swap it in |
+| Blog | nav | Original site had a BLOGS menu item; no blog exists in this static build (ask if needed) |

@@ -490,6 +490,72 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
 }
 .field textarea { min-height: 120px; resize: vertical; }
 
+/* ---- Service card bullet lists ---- */
+.svc-list { margin-top: 16px; display: grid; gap: 10px; }
+.svc-list li {
+  position: relative; padding-left: 22px;
+  color: var(--text-mid); font-size: 0.9rem; line-height: 1.5;
+}
+.svc-list li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 8px; height: 8px; border-radius: 3px;
+  background: linear-gradient(135deg, var(--amber), #ff8a00);
+  box-shadow: 0 0 8px rgba(255, 179, 26, 0.5);
+}
+.svc-list li strong { color: var(--text-hi); font-weight: 600; }
+
+/* ---- Founder quote ---- */
+.founder-quote {
+  margin-top: 30px; padding: 26px 28px; border-radius: var(--radius);
+  border-left: 3px solid var(--amber);
+  background: linear-gradient(160deg, rgba(255, 179, 26, 0.07), rgba(255, 255, 255, 0.02));
+}
+.founder-quote blockquote { color: var(--text-mid); font-style: italic; font-size: 0.98rem; }
+.founder-quote cite { display: block; margin-top: 14px; font-style: normal; font-family: var(--font-display); font-weight: 600; color: var(--amber-soft); font-size: 0.92rem; }
+
+/* ---- FAQ accordion ---- */
+.faq-list { max-width: 820px; margin-inline: auto; display: grid; gap: 14px; }
+.faq-item {
+  border: 1px solid var(--stroke); border-radius: var(--radius-sm);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  overflow: hidden; transition: border-color 0.3s;
+}
+.faq-item[open] { border-color: rgba(255, 179, 26, 0.4); }
+.faq-item summary {
+  list-style: none; cursor: pointer; padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.02rem;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary .faq-x {
+  flex: none; width: 28px; height: 28px; border-radius: 8px; position: relative;
+  border: 1px solid var(--stroke-strong); transition: transform 0.3s, border-color 0.3s;
+}
+.faq-item summary .faq-x::before, .faq-item summary .faq-x::after {
+  content: ''; position: absolute; top: 50%; left: 50%; background: var(--amber);
+  transform: translate(-50%, -50%); border-radius: 2px;
+}
+.faq-item summary .faq-x::before { width: 12px; height: 2px; }
+.faq-item summary .faq-x::after { width: 2px; height: 12px; transition: opacity 0.3s; }
+.faq-item[open] summary .faq-x { transform: rotate(90deg); border-color: var(--amber); }
+.faq-item[open] summary .faq-x::after { opacity: 0; }
+.faq-item .faq-a { padding: 0 24px 22px; color: var(--text-mid); font-size: 0.95rem; }
+
+/* ---- Office cards ---- */
+.office-card { position: relative; }
+.office-card .flag {
+  display: inline-flex; padding: 6px 14px; border-radius: 999px; margin-bottom: 18px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  background: rgba(255, 179, 26, 0.13); color: var(--amber-soft); border: 1px solid rgba(255, 179, 26, 0.3);
+}
+.office-card.alt .flag { background: rgba(55, 213, 255, 0.1); color: var(--cyan-soft); border-color: rgba(55, 213, 255, 0.3); }
+.office-card h3 { font-size: 1.4rem; margin-bottom: 14px; }
+.office-card .office-lines { display: grid; gap: 10px; color: var(--text-mid); font-size: 0.95rem; }
+.office-card .office-lines a { color: var(--text-mid); transition: color 0.25s; }
+.office-card .office-lines a:hover { color: var(--amber); }
+.office-card .office-lines svg { flex: none; color: var(--amber); margin-top: 3px; }
+.office-card .office-lines > div { display: flex; gap: 12px; align-items: flex-start; }
+
 /* ---- Footer ---- */
 .footer { border-top: 1px solid var(--stroke); padding: 72px 0 34px; background: rgba(255, 255, 255, 0.012); position: relative; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 48px; margin-bottom: 54px; }
