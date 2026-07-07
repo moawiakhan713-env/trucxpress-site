@@ -1,0 +1,11 @@
+# TrucXpress — cache policy
+# HTML/CSS/JS always revalidate so deploys show up immediately;
+# fonts, images and 3D models are immutable and cache long.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(woff2|svg|png|jpg|jpeg|webp|glb|wasm)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+</IfModule>
