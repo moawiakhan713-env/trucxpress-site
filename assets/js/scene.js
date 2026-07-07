@@ -1,7 +1,7 @@
 /* ============================================================
    TRUCXPRESS — Three.js scenes
    - initHighwayScene(): night-highway hero with a stylized semi
-   - initCargoScene():   floating freight containers (about visual)
+   - initRouteMap():     US dispatch route map (about visual)
    - initParticleHero(): lightweight particle field for page heros
    ============================================================ */
 import * as THREE from 'three';
@@ -344,62 +344,152 @@ export function initHighwayScene(container) {
 }
 
 /* ============================================================
-   2. FLOATING CARGO CONTAINERS (about visual)
+   2. US DISPATCH ROUTE MAP (about visual)
+   Dot-matrix USA, Phoenix hub, freight lanes arcing to major
+   cities with light pulses traveling along them.
    ============================================================ */
-export function initCargoScene(container) {
+const US_OUTLINE = [
+  [-124.7, 48.4], [-124.1, 46.9], [-124.4, 43.3], [-124.2, 41.9], [-123.8, 39.8],
+  [-122.5, 37.8], [-121.9, 36.6], [-120.6, 34.6], [-118.4, 34.0], [-117.1, 32.5],
+  [-114.7, 32.7], [-111.0, 31.3], [-108.2, 31.3], [-106.5, 31.8], [-104.9, 30.6],
+  [-103.2, 29.0], [-102.4, 29.8], [-101.4, 29.8], [-99.5, 27.5], [-97.1, 25.9],
+  [-97.4, 27.8], [-96.6, 28.7], [-94.7, 29.3], [-93.2, 29.8], [-91.0, 29.2],
+  [-89.4, 28.9], [-89.6, 30.2], [-87.5, 30.3], [-85.4, 29.7], [-84.0, 30.1],
+  [-82.7, 27.5], [-81.8, 26.1], [-80.0, 25.2], [-80.0, 26.8], [-81.2, 29.7],
+  [-81.5, 30.7], [-80.8, 32.0], [-79.0, 33.8], [-75.5, 35.2], [-76.0, 37.2],
+  [-75.0, 38.9], [-74.0, 40.7], [-71.9, 41.3], [-70.0, 41.7], [-70.8, 42.9],
+  [-68.9, 44.3], [-67.0, 44.8], [-69.2, 47.4], [-71.5, 45.0], [-75.0, 44.8],
+  [-76.8, 43.6], [-79.0, 43.3], [-79.0, 42.5], [-82.5, 41.7], [-83.1, 42.3],
+  [-82.4, 43.0], [-84.7, 45.8], [-88.0, 48.0], [-89.5, 48.0], [-95.2, 49.0],
+  [-104.0, 49.0], [-110.0, 49.0], [-122.7, 49.0],
+];
+
+const CITIES = {
+  phoenix: [-112.07, 33.45],
+  losangeles: [-118.24, 34.05],
+  seattle: [-122.33, 47.60],
+  denver: [-104.99, 39.74],
+  dallas: [-96.80, 32.78],
+  chicago: [-87.63, 41.88],
+  atlanta: [-84.39, 33.75],
+  miami: [-80.19, 25.76],
+  newyork: [-74.00, 40.71],
+};
+
+function projectUS(lon, lat, s = 0.25) {
+  return [ (lon + 98) * 0.777 * s, -(lat - 38) * s ];
+}
+
+function pointInPolygon(x, y, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+    if (((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+
+export function initRouteMap(container) {
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 1.2, 11);
+  const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera.position.set(0, 5.6, 8.2);
+  camera.lookAt(0, -0.4, 0);
 
   const renderer = makeRenderer(container);
   autoResize(container, camera, renderer);
 
-  scene.add(new THREE.HemisphereLight(0x33477a, 0x0a0d18, 1.1));
-  const key = new THREE.DirectionalLight(0xffd28a, 1.6);
-  key.position.set(6, 8, 6);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0x37d5ff, 1.1);
-  rim.position.set(-7, 3, -5);
-  scene.add(rim);
+  const map = new THREE.Group();
+  map.position.y = -0.6;
+  scene.add(map);
 
-  const group = new THREE.Group();
-  scene.add(group);
+  /* ---- dot-matrix USA ---- */
+  const dots = [];
+  const STEP = 0.21;
+  for (let lon = -125; lon <= -66.5; lon += STEP / (0.777 * 0.25) * 0.25) {
+    for (let lat = 25; lat <= 49.5; lat += STEP / 0.25 * 0.25) {
+      if (pointInPolygon(lon, lat, US_OUTLINE)) {
+        const [x, z] = projectUS(lon, lat);
+        dots.push(x, 0, z);
+      }
+    }
+  }
+  const dotGeo = new THREE.CircleGeometry(0.052, 6);
+  dotGeo.rotateX(-Math.PI / 2);
+  const dotMesh = new THREE.InstancedMesh(
+    dotGeo,
+    new THREE.MeshBasicMaterial({ color: 0x37507a, transparent: true, opacity: 0.75 }),
+    dots.length / 3
+  );
+  const dum = new THREE.Object3D();
+  for (let i = 0; i < dots.length / 3; i++) {
+    dum.position.set(dots[i * 3], 0, dots[i * 3 + 2]);
+    dum.updateMatrix();
+    dotMesh.setMatrixAt(i, dum.matrix);
+  }
+  map.add(dotMesh);
 
-  const colors = [0xff9a1a, 0x2a86b8, 0x9aa5bd, 0xff9a1a, 0x35608a, 0xc7cedd];
-  const boxes = [];
-  const boxGeo = new THREE.BoxGeometry(2.6, 1.15, 1.15, 8, 1, 1);
-  for (let i = 0; i < 6; i++) {
-    const mat = new THREE.MeshStandardMaterial({
-      color: colors[i], roughness: 0.45, metalness: 0.5,
-    });
-    const b = new THREE.Mesh(boxGeo, mat);
-    const edges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(boxGeo),
-      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18 })
-    );
-    b.add(edges);
-    const angle = (i / 6) * Math.PI * 2;
-    b.userData = {
-      angle, radius: 3.1 + (i % 2) * 0.9,
-      y: (i - 2.5) * 0.85,
-      spin: (Math.random() - 0.5) * 0.5,
-      bobPhase: Math.random() * Math.PI * 2,
-    };
-    group.add(b);
-    boxes.push(b);
+  /* ---- cities ---- */
+  const cityPos = {};
+  const cityMat = new THREE.MeshBasicMaterial({ color: 0x8ae9ff });
+  const hubMat = new THREE.MeshBasicMaterial({ color: 0xffb31a });
+  for (const [name, [lon, lat]] of Object.entries(CITIES)) {
+    const [x, z] = projectUS(lon, lat);
+    cityPos[name] = new THREE.Vector3(x, 0.03, z);
+    const isHub = name === 'phoenix';
+    const m = new THREE.Mesh(new THREE.SphereGeometry(isHub ? 0.13 : 0.075, 12, 12), isHub ? hubMat : cityMat);
+    m.position.set(x, 0.05, z);
+    map.add(m);
+  }
+  // pulsing ring on the Phoenix hub
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(0.16, 0.2, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffb31a, transparent: true, side: THREE.DoubleSide })
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.copy(cityPos.phoenix).setY(0.04);
+  map.add(ring);
+
+  /* ---- freight lanes ---- */
+  const LANES = [
+    ['phoenix', 'losangeles'], ['phoenix', 'seattle'], ['phoenix', 'denver'],
+    ['phoenix', 'dallas'], ['phoenix', 'chicago'], ['phoenix', 'atlanta'],
+    ['phoenix', 'newyork'], ['dallas', 'miami'], ['chicago', 'newyork'],
+  ];
+  const pulses = [];
+  const laneMat = new THREE.MeshBasicMaterial({
+    color: 0x37d5ff, transparent: true, opacity: 0.32,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  });
+  const pulseTex = (() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const g = c.getContext('2d');
+    const grad = g.createRadialGradient(32, 32, 2, 32, 32, 30);
+    grad.addColorStop(0, 'rgba(255,220,140,1)');
+    grad.addColorStop(1, 'rgba(255,179,26,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+  for (const [a, b] of LANES) {
+    const pa = cityPos[a], pb = cityPos[b];
+    const mid = pa.clone().add(pb).multiplyScalar(0.5);
+    mid.y = 0.45 + pa.distanceTo(pb) * 0.16;
+    const curve = new THREE.QuadraticBezierCurve3(pa, mid, pb);
+    map.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.012, 6, false), laneMat));
+    for (let k = 0; k < 2; k++) {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: pulseTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      }));
+      sp.scale.set(0.3, 0.3, 1);
+      map.add(sp);
+      pulses.push({ sprite: sp, curve, offset: Math.random(), speed: 0.1 + Math.random() * 0.1 });
+    }
   }
 
-  // glowing core
-  const core = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.85, 1),
-    new THREE.MeshBasicMaterial({ color: 0xffb31a, wireframe: true, transparent: true, opacity: 0.55 })
-  );
-  scene.add(core);
-  const coreGlow = new THREE.PointLight(0xffb31a, 26, 14, 2);
-  scene.add(coreGlow);
-
-  const dust = starField(220, 30, 0.14, 0x8ae9ff, 0.6);
-  dust.position.y = -8;
+  /* ---- ambience ---- */
+  const dust = starField(180, 26, 0.12, 0x8ae9ff, 0.5);
+  dust.position.y = -6;
   scene.add(dust);
 
   const mouse = { x: 0, y: 0 };
@@ -409,27 +499,27 @@ export function initCargoScene(container) {
     mouse.y = ((e.clientY - r.top) / r.height) * 2 - 1;
   }, { passive: true });
 
+  const v = new THREE.Vector3();
   runLoop(container, (dt, t) => {
-    dt = Math.min(dt, 0.05);
     const speed = REDUCED ? 0 : 1;
-    for (const b of boxes) {
-      const u = b.userData;
-      u.angle += dt * 0.25 * speed;
-      b.position.set(
-        Math.cos(u.angle) * u.radius,
-        u.y + Math.sin(t * 1.2 + u.bobPhase) * 0.22 * speed,
-        Math.sin(u.angle) * u.radius
-      );
-      b.rotation.y = -u.angle + u.spin;
-      b.rotation.x = Math.sin(t * 0.6 + u.bobPhase) * 0.1 * speed;
+    for (const p of pulses) {
+      const u = (t * p.speed * speed + p.offset) % 1;
+      p.curve.getPoint(u, v);
+      p.sprite.position.copy(v);
+      p.sprite.material.opacity = Math.sin(u * Math.PI);
     }
-    core.rotation.y = t * 0.4 * speed;
-    core.rotation.x = t * 0.22 * speed;
-    group.rotation.y += (mouse.x * 0.45 - group.rotation.y) * 0.04;
-    group.rotation.x += (mouse.y * 0.2 - group.rotation.x) * 0.04;
+    const ringP = (t * 0.6) % 1;
+    ring.scale.setScalar(1 + ringP * 2.2);
+    ring.material.opacity = (1 - ringP) * 0.8;
+    map.rotation.y += (mouse.x * 0.22 - map.rotation.y) * 0.05;
+    map.rotation.x += (mouse.y * 0.1 - map.rotation.x) * 0.05;
+    dust.rotation.y = t * 0.015 * speed;
     renderer.render(scene, camera);
   });
 }
+
+/* legacy name used by existing pages */
+export const initCargoScene = initRouteMap;
 
 /* ============================================================
    3. LIGHT PARTICLE HERO (inner pages)
