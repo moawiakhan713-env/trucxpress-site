@@ -239,7 +239,7 @@ export function initRobot(container) {
   earR.position.set(0.29, 0, 0);
   head.add(earL, earR);
 
-  robot.scale.setScalar(0.65);
+  robot.scale.setScalar(0.48);
 
   /* ---- interaction state ---- */
   let loved = false, lovedTimer = null;

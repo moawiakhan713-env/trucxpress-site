@@ -172,6 +172,7 @@ function gatesTexture() {
 function buildTruck(env) {
   const truck = new THREE.Group();
   const trailerG = new THREE.Group();
+  trailerG.scale.setScalar(0.86);   // keep the box proportional to the tractor
   const tractor = new THREE.Group();
   tractor.position.x = 4.15;
   truck.add(trailerG, tractor);
@@ -503,11 +504,11 @@ export function initCinematicHero(container) {
   const parkedMat = new THREE.MeshStandardMaterial({ color: 0xc4c9d4, roughness: 0.6, metalness: 0.2 });
   const parkedDark = new THREE.MeshStandardMaterial({ color: 0x101319, roughness: 0.7 });
   for (const bx of [101.5, 112.5, 133.5]) {
-    const t = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.75, 8.6), parkedMat);
-    t.position.set(bx, 2.4, -4.4);
+    const t = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.4, 7.8), parkedMat);
+    t.position.set(bx, 2.15, -4.4);
     scene.add(t);
-    const u = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.0, 8.2), parkedDark);
-    u.position.set(bx, 0.52, -4.4);
+    const u = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.95, 7.4), parkedDark);
+    u.position.set(bx, 0.5, -4.4);
     scene.add(u);
   }
   // warm gate spill lights
