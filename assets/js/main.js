@@ -167,6 +167,90 @@
     counters.forEach((el) => io.observe(el));
   }
 
+  /* ---- live load tracker ---- */
+  const tracker = document.querySelector('#load-tracker');
+  if (tracker) {
+    const LOADS = [
+      { id: '#PHX-4821', equip: 'Dry Van',  from: 'Phoenix, AZ',     to: 'Chicago, IL',  total: 1753, target: 0.62, dep: 'Departed 6:40 AM' },
+      { id: '#DAL-1096', equip: 'Reefer',   from: 'Dallas, TX',      to: 'Atlanta, GA',  total: 781,  target: 0.44, dep: 'Departed 9:15 AM' },
+      { id: '#LAX-3307', equip: 'Flatbed',  from: 'Los Angeles, CA', to: 'Seattle, WA',  total: 1135, target: 0.78, dep: 'Departed 4:05 AM' },
+      { id: '#ATL-2210', equip: 'Power Only', from: 'Atlanta, GA',   to: 'New York, NY', total: 872,  target: 0.31, dep: 'Departed 11:30 AM' },
+    ];
+    const el = (id) => document.getElementById(id);
+    const fmt = (n) => Math.round(n).toLocaleString('en-US');
+    const AVG_MPH = 52;
+
+    let loadIdx = 0, pct = 0, targetPct = 0, animStart = null, holdTimer = null, creepTimer = null, running = false;
+
+    function setLoad(i) {
+      const L = LOADS[i];
+      el('trk-id').textContent = L.id;
+      el('trk-equip').textContent = L.equip;
+      el('trk-from').textContent = L.from;
+      el('trk-to').textContent = L.to;
+      el('trk-dep').textContent = L.dep;
+      el('trk-total').textContent = fmt(L.total);
+      pct = 0;
+      targetPct = L.target;
+      animStart = performance.now();
+    }
+
+    function paint() {
+      const L = LOADS[loadIdx];
+      const traveled = L.total * pct;
+      const remaining = Math.max(L.total - traveled, 0);
+      const etaH = remaining / AVG_MPH;
+      const h = Math.floor(etaH), m = Math.round((etaH - h) * 60);
+      el('trk-fill').style.width = (pct * 100) + '%';
+      el('trk-truck').style.left = (pct * 100) + '%';
+      el('trk-traveled').textContent = fmt(traveled);
+      el('trk-remaining').textContent = fmt(remaining);
+      el('trk-pct').textContent = Math.round(pct * 100);
+      el('trk-eta').textContent = h > 0 ? `${h}h ${m}m` : `${m}m`;
+    }
+
+    function tick(now) {
+      if (!running) return;
+      const t = Math.min((now - animStart) / 2400, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      pct = targetPct * eased;
+      paint();
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else if (!REDUCED) {
+        // hold with a live creep, then rotate to the next load
+        creepTimer = setInterval(() => {
+          pct = Math.min(pct + 0.0004, 0.99);
+          paint();
+        }, 900);
+        holdTimer = setTimeout(() => {
+          clearInterval(creepTimer);
+          tracker.classList.add('switching');
+          setTimeout(() => {
+            loadIdx = (loadIdx + 1) % LOADS.length;
+            setLoad(loadIdx);
+            tracker.classList.remove('switching');
+            requestAnimationFrame(tick);
+          }, 480);
+        }, 6500);
+      }
+    }
+
+    const trackerIO = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !running) {
+        running = true;
+        setLoad(loadIdx);
+        if (REDUCED) { pct = targetPct; paint(); return; }
+        requestAnimationFrame(tick);
+      } else if (!entry.isIntersecting && running) {
+        running = false;
+        if (holdTimer) clearTimeout(holdTimer);
+        if (creepTimer) clearInterval(creepTimer);
+      }
+    }, { threshold: 0.35 });
+    trackerIO.observe(tracker);
+  }
+
   /* ---- contact form (no backend yet: builds a mailto) ---- */
   const form = document.querySelector('#contact-form');
   if (form) {

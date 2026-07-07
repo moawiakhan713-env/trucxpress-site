@@ -74,6 +74,45 @@
     <div class="scroll-hint"><span class="wheel"></span>Scroll</div>
   </section>
 
+  <!-- ================= LIVE LOAD TRACKER ================= -->
+  <section class="section" id="live-tracking" style="padding-top:90px;padding-bottom:50px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Live Dispatch</span>
+        <h2>Loads on the Move — Right Now</h2>
+      </div>
+      <div class="card tracker-card reveal" id="load-tracker">
+        <div class="tracker-top">
+          <span class="live-chip"><span class="live-dot"></span>LIVE</span>
+          <span class="load-id">Load <strong id="trk-id">#PHX-4821</strong> · <span id="trk-equip">Dry Van</span></span>
+          <span class="load-status">In Transit</span>
+        </div>
+        <div class="tracker-route">
+          <div class="route-city">
+            <strong id="trk-from">Phoenix, AZ</strong>
+            <span id="trk-dep">Departed 6:40 AM</span>
+          </div>
+          <div class="route-city right">
+            <strong id="trk-to">Chicago, IL</strong>
+            <span>ETA <span id="trk-eta">—</span></span>
+          </div>
+        </div>
+        <div class="tracker-bar">
+          <div class="bar-track"><div class="bar-fill" id="trk-fill"></div></div>
+          <div class="bar-truck" id="trk-truck">
+            <svg width="34" height="20" viewBox="0 0 34 20" fill="currentColor"><path d="M1 12h14V2H1v10zm15-7h6l5 5v4h-2.2a3 3 0 0 0-5.6 0h-3.2V5zM4 15.5A2.5 2.5 0 1 0 4 15.49zm8 0A2.5 2.5 0 1 0 12 15.49zm14 0A2.5 2.5 0 1 0 26 15.49z"/></svg>
+          </div>
+        </div>
+        <div class="tracker-stats">
+          <div><span class="num"><span id="trk-traveled">0</span><span class="unit"> mi</span></span><span class="lbl">Traveled</span></div>
+          <div><span class="num"><span id="trk-total">0</span><span class="unit"> mi</span></span><span class="lbl">Total Distance</span></div>
+          <div><span class="num"><span id="trk-remaining">0</span><span class="unit"> mi</span></span><span class="lbl">Remaining</span></div>
+          <div><span class="num"><span id="trk-pct">0</span><span class="unit">%</span></span><span class="lbl">Complete</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= STATEMENT END-CARD ================= -->
   <section class="statement">
     <div class="reveal">
