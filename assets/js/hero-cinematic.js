@@ -95,6 +95,79 @@ function contactShadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function dockGridTexture() {
+  const S = 1024;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const g = c.getContext('2d');
+  g.fillStyle = '#070a12';
+  g.fillRect(0, 0, S, S);
+  const N = 7, cell = S / N, gap = 10;
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      const x = i * cell + gap, y = j * cell + gap, w = cell - gap * 2;
+      const grad = g.createLinearGradient(x, y, x + w, y + w);
+      grad.addColorStop(0, '#141a29');
+      grad.addColorStop(1, '#0b0f1a');
+      g.fillStyle = grad;
+      g.fillRect(x, y, w, w);
+      g.strokeStyle = 'rgba(90,110,150,0.25)';
+      g.lineWidth = 2;
+      g.strokeRect(x, y, w, w);
+    }
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(5, 3.5);
+  return t;
+}
+
+function gatesTexture() {
+  const W = 4096, H = 1024;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  // warm wall
+  const wall = g.createLinearGradient(0, 0, 0, H);
+  wall.addColorStop(0, '#d99976');
+  wall.addColorStop(1, '#b06b4c');
+  g.fillStyle = wall;
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(40,20,15,0.5)';
+  g.fillRect(0, 0, W, 46);
+  const BAYS = 10, bw = W / BAYS;
+  for (let i = 0; i < BAYS; i++) {
+    const x = i * bw;
+    // roller door inset
+    const dx = x + bw * 0.14, dw = bw * 0.72, dy = H * 0.3, dh = H * 0.66;
+    const door = g.createLinearGradient(0, dy, 0, dy + dh);
+    door.addColorStop(0, '#8a5340');
+    door.addColorStop(1, '#5f3628');
+    g.fillStyle = door;
+    g.fillRect(dx, dy, dw, dh);
+    g.strokeStyle = 'rgba(30,15,10,0.55)';
+    g.lineWidth = 3;
+    for (let s = 1; s < 9; s++) {
+      g.beginPath(); g.moveTo(dx, dy + (dh / 9) * s); g.lineTo(dx + dw, dy + (dh / 9) * s); g.stroke();
+    }
+    g.strokeRect(dx, dy, dw, dh);
+    // bay separator
+    g.fillStyle = 'rgba(45,22,16,0.8)';
+    g.fillRect(x, 46, 8, H);
+    // big number
+    g.font = '900 200px "Space Grotesk", "Arial Black", sans-serif';
+    g.fillStyle = '#f7e8dc';
+    g.shadowColor = 'rgba(0,0,0,0.35)';
+    g.shadowBlur = 14;
+    g.fillText(String(i + 1), x + bw * 0.16, H * 0.24);
+    g.shadowBlur = 0;
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+
 /* ---------- procedural semi (tractor is swapped for the GLB) ---------- */
 function buildTruck(env) {
   const truck = new THREE.Group();
@@ -293,7 +366,12 @@ function loadTractorGlb(url) {
     });
 }
 
-/* ============================================================ */
+/* ============================================================
+   The journey: sunset yard -> night dock grid -> numbered gates.
+   Scroll progress (window.__heroP) drives the truck down the path
+   and the camera through six keyframed shots while sky, fog and
+   light palettes crossfade between zones.
+   ============================================================ */
 export function initCinematicHero(container) {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -304,33 +382,35 @@ export function initCinematicHero(container) {
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x5b3a28, 55, 190);
+  scene.fog = new THREE.Fog(0x5b3a28, 55, 200);
 
-  const camera = new THREE.PerspectiveCamera(34, container.clientWidth / container.clientHeight, 0.1, 400);
+  const camera = new THREE.PerspectiveCamera(34, container.clientWidth / container.clientHeight, 0.1, 500);
 
-  // soft studio reflections for the chrome & paint
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-  /* ---- sky dome ---- */
+  /* ---- sky dome with tweenable palette ---- */
+  const skyUniforms = {
+    uHorizon: { value: new THREE.Color(1.0, 0.79, 0.52) },
+    uMid: { value: new THREE.Color(0.86, 0.45, 0.24) },
+    uTop: { value: new THREE.Color(0.10, 0.13, 0.27) },
+  };
   const sky = new THREE.Mesh(
-    new THREE.SphereGeometry(320, 32, 24),
+    new THREE.SphereGeometry(380, 32, 24),
     new THREE.ShaderMaterial({
       side: THREE.BackSide,
       depthWrite: false,
-      uniforms: { },
+      uniforms: skyUniforms,
       vertexShader: `
         varying vec3 vPos;
         void main() { vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
       fragmentShader: `
+        uniform vec3 uHorizon; uniform vec3 uMid; uniform vec3 uTop;
         varying vec3 vPos;
         void main() {
-          float h = clamp(vPos.y / 320.0, -0.06, 1.0);
-          vec3 horizon = vec3(1.00, 0.79, 0.52);
-          vec3 mid     = vec3(0.86, 0.45, 0.24);
-          vec3 top     = vec3(0.10, 0.13, 0.27);
-          vec3 col = h < 0.16 ? mix(horizon, mid, smoothstep(-0.02, 0.16, h))
-                              : mix(mid, top, smoothstep(0.16, 0.7, h));
+          float h = clamp(vPos.y / 380.0, -0.06, 1.0);
+          vec3 col = h < 0.16 ? mix(uHorizon, uMid, smoothstep(-0.02, 0.16, h))
+                              : mix(uMid, uTop, smoothstep(0.16, 0.7, h));
           gl_FragColor = vec4(col, 1.0);
         }`,
     })
@@ -343,7 +423,7 @@ export function initCinematicHero(container) {
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.95,
   }));
   sunGlow.scale.set(60, 60, 1);
-  sunGlow.position.set(26, 7, -60);
+  sunGlow.position.set(26, 7, -70);
   scene.add(sunGlow);
   const sunCore = new THREE.Sprite(new THREE.SpriteMaterial({
     map: radialGlowTexture('rgba(255,255,245,1)', 'rgba(255,220,150,0)'),
@@ -354,7 +434,8 @@ export function initCinematicHero(container) {
   scene.add(sunCore);
 
   /* ---- lights ---- */
-  scene.add(new THREE.HemisphereLight(0xffc890, 0x1c1410, 0.55));
+  const hemi = new THREE.HemisphereLight(0xffc890, 0x1c1410, 0.55);
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffd9a8, 2.6);
   sun.position.set(26, 8, -40);
   scene.add(sun);
@@ -364,13 +445,13 @@ export function initCinematicHero(container) {
 
   /* ---- ground ---- */
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(700, 700),
+    new THREE.PlaneGeometry(900, 700),
     new THREE.MeshStandardMaterial({ color: 0x191a20, roughness: 0.32, metalness: 0.55, envMapIntensity: 0.55 })
   );
   ground.rotation.x = -Math.PI / 2;
+  ground.position.x = 100;
   scene.add(ground);
 
-  // contact shadow blob under the rig
   const blob = new THREE.Mesh(
     new THREE.PlaneGeometry(17, 4.6),
     new THREE.MeshBasicMaterial({ map: contactShadowTexture(), transparent: true, depthWrite: false, opacity: 0.85 })
@@ -379,14 +460,70 @@ export function initCinematicHero(container) {
   blob.position.y = 0.012;
   scene.add(blob);
 
-  /* ---- truck (GLB if provided, else procedural) ---- */
+  /* ---- ZONE 2: night dock-roof grid (around x = 62) ---- */
+  const dock = new THREE.Mesh(
+    new THREE.PlaneGeometry(95, 92),
+    new THREE.MeshStandardMaterial({ map: dockGridTexture(), roughness: 0.85, metalness: 0.2, transparent: true })
+  );
+  dock.rotation.x = -Math.PI / 2;
+  dock.position.set(76, 0.02, 0);
+  scene.add(dock);
+  const blockMat = new THREE.MeshStandardMaterial({ color: 0x0d1119, roughness: 0.8, metalness: 0.3 });
+  for (let i = 0; i < 6; i++) {
+    for (const z of [-15, 15]) {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(9, 3.6 + (i % 3), 9), blockMat);
+      b.position.set(30 + i * 12.5, (3.6 + (i % 3)) / 2, z + (i % 2 ? 2 : -2));
+      scene.add(b);
+    }
+  }
+  // guide lane lights through the dock
+  const laneMat = new THREE.MeshBasicMaterial({ color: 0x37d5ff, transparent: true, opacity: 0.35 });
+  for (const z of [-2.6, 2.6]) {
+    const lane = new THREE.Mesh(new THREE.BoxGeometry(88, 0.03, 0.12), laneMat);
+    lane.position.set(60, 0.03, z);
+    scene.add(lane);
+  }
+
+  /* ---- ZONE 3: numbered gate bays (around x = 118) ---- */
+  const gates = new THREE.Mesh(
+    new THREE.PlaneGeometry(54, 8),
+    new THREE.MeshStandardMaterial({ map: gatesTexture(), roughness: 0.8, metalness: 0.05 })
+  );
+  gates.position.set(120, 4, -8.2);
+  scene.add(gates);
+  // apron in front of the gates
+  const apron = new THREE.Mesh(
+    new THREE.PlaneGeometry(54, 16),
+    new THREE.MeshStandardMaterial({ color: 0x23252d, roughness: 0.5, metalness: 0.35 })
+  );
+  apron.rotation.x = -Math.PI / 2;
+  apron.position.set(120, 0.015, -0.5);
+  scene.add(apron);
+  // parked trailers backed into a few bays
+  const parkedMat = new THREE.MeshStandardMaterial({ color: 0xc4c9d4, roughness: 0.6, metalness: 0.2 });
+  const parkedDark = new THREE.MeshStandardMaterial({ color: 0x101319, roughness: 0.7 });
+  for (const bx of [101.5, 112.5, 133.5]) {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.75, 8.6), parkedMat);
+    t.position.set(bx, 2.4, -4.4);
+    scene.add(t);
+    const u = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.0, 8.2), parkedDark);
+    u.position.set(bx, 0.52, -4.4);
+    scene.add(u);
+  }
+  // warm gate spill lights
+  for (const gx of [108, 120, 132]) {
+    const gl = new THREE.PointLight(0xffb37a, 14, 26, 2);
+    gl.position.set(gx, 5.5, -4);
+    scene.add(gl);
+  }
+
+  /* ---- truck ---- */
   const rig = new THREE.Group();
   scene.add(rig);
   const proc = buildTruck();
   rig.add(proc.truck);
   let wheels = [...proc.trailerWheels, ...proc.tractorWheels];
 
-  // photoreal tractor swap: keep the branded trailer, replace the cab
   loadTractorGlb('assets/models/truck.glb').then((tractorModel) => {
     proc.truck.remove(proc.tractor);
     proc.truck.remove(proc.tractorRolling);
@@ -409,17 +546,35 @@ export function initCinematicHero(container) {
     renderer.setSize(w, h);
   });
 
-  /* ---- camera poses ---- */
-  const POSES = [
-    { pos: new THREE.Vector3(1.2, 2.7, 21.8), look: new THREE.Vector3(-2.0, 3.55, 0), fov: 33 }, // side profile, truck low-right
-    { pos: new THREE.Vector3(11.6, 1.35, 9.0), look: new THREE.Vector3(4.6, 1.5, 0), fov: 30 }, // front 3/4 into the sun
-    { pos: new THREE.Vector3(-6.5, 5.2, 10.5), look: new THREE.Vector3(4.0, 1.2, 0), fov: 40 }, // high rear as it departs
-  ];
-  const cur = { pos: POSES[0].pos.clone(), look: POSES[0].look.clone(), fov: POSES[0].fov };
-  const tPos = new THREE.Vector3(), tLook = new THREE.Vector3();
+  /* ---- journey definition ---- */
   const smooth = (t) => t * t * (3 - 2 * t);
+  const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
+  const TRUCK_END = 118;
+  const truckX = (p) => TRUCK_END * smooth(clamp01((p - 0.16) / 0.66));
 
-  let pSm = 0;
+  // keyframed shots; positions may reference the truck (tx)
+  const SHOTS = [
+    { p: 0.00, fov: 33, pos: (tx) => [1.2, 2.7, 21.8],            look: (tx) => [-2.0, 3.55, 0] },
+    { p: 0.24, fov: 32, pos: (tx) => [tx + 10, 1.9, 14.5],        look: (tx) => [tx + 2, 2.2, 0] },
+    { p: 0.50, fov: 38, pos: (tx) => [tx - 5, 30, 5],             look: (tx) => [tx + 8, 0, -1] },
+    { p: 0.70, fov: 32, pos: (tx) => [tx + 15, 2.8, 13.5],        look: (tx) => [tx + 2.5, 2.6, -2] },
+    { p: 0.88, fov: 34, pos: (tx) => [tx + 8, 1.6, 11],           look: (tx) => [tx - 0.5, 3.0, -5.5] },
+    { p: 1.00, fov: 39, pos: (tx) => [tx + 2, 9.5, 20],           look: (tx) => [tx - 2, 2, -6] },
+  ];
+
+  // zone palettes: sunset yard / night dock / warm gates
+  const PAL = [
+    { horizon: new THREE.Color(1.00, 0.79, 0.52), mid: new THREE.Color(0.86, 0.45, 0.24), top: new THREE.Color(0.10, 0.13, 0.27),
+      fog: new THREE.Color(0x5b3a28), sunI: 2.6, sunC: new THREE.Color(0xffd9a8), hemiI: 0.55, glow: 1.0 },
+    { horizon: new THREE.Color(0.13, 0.17, 0.27), mid: new THREE.Color(0.05, 0.07, 0.13), top: new THREE.Color(0.01, 0.02, 0.06),
+      fog: new THREE.Color(0x080b13), sunI: 0.55, sunC: new THREE.Color(0x9db4e6), hemiI: 0.35, glow: 0.08 },
+    { horizon: new THREE.Color(1.00, 0.70, 0.50), mid: new THREE.Color(0.72, 0.40, 0.30), top: new THREE.Color(0.16, 0.11, 0.16),
+      fog: new THREE.Color(0x6b4434), sunI: 1.5, sunC: new THREE.Color(0xffc190), hemiI: 0.6, glow: 0.45 },
+  ];
+  const mixed = { horizon: new THREE.Color(), mid: new THREE.Color(), top: new THREE.Color(), fog: new THREE.Color(), sunC: new THREE.Color() };
+
+  const tPos = new THREE.Vector3(), tLook = new THREE.Vector3();
+  let pSm = 0, prevX = 0;
   const clock = new THREE.Clock();
   let rafId = null;
 
@@ -431,28 +586,25 @@ export function initCinematicHero(container) {
     const p = REDUCED ? 0 : (window.__heroP || 0);
     pSm += (p - pSm) * Math.min(6 * dt, 1);
 
-    // pose interpolation across the two segments
-    let fov;
-    if (pSm < 0.5) {
-      const k = smooth(pSm / 0.5);
-      tPos.lerpVectors(POSES[0].pos, POSES[1].pos, k);
-      tLook.lerpVectors(POSES[0].look, POSES[1].look, k);
-      fov = POSES[0].fov + (POSES[1].fov - POSES[0].fov) * k;
-    } else {
-      const k = smooth((pSm - 0.5) / 0.5);
-      tPos.lerpVectors(POSES[1].pos, POSES[2].pos, k);
-      tLook.lerpVectors(POSES[1].look, POSES[2].look, k);
-      fov = POSES[1].fov + (POSES[2].fov - POSES[1].fov) * k;
+    // truck along the path
+    const tx = truckX(pSm);
+    rig.position.x = tx;
+    blob.position.x = tx;
+    const speed = Math.max(0, (tx - prevX) / Math.max(dt, 1e-4));
+    prevX = tx;
+
+    // camera keyframes
+    let a = SHOTS[0], b = SHOTS[1];
+    for (let i = 0; i < SHOTS.length - 1; i++) {
+      if (pSm >= SHOTS[i].p && pSm <= SHOTS[i + 1].p) { a = SHOTS[i]; b = SHOTS[i + 1]; break; }
+      if (pSm > SHOTS[SHOTS.length - 1].p) { a = b = SHOTS[SHOTS.length - 1]; }
     }
+    const k = a === b ? 1 : smooth((pSm - a.p) / (b.p - a.p));
+    const pa = a.pos(tx), pb = b.pos(tx), la = a.look(tx), lb = b.look(tx);
+    tPos.set(pa[0] + (pb[0] - pa[0]) * k, pa[1] + (pb[1] - pa[1]) * k, pa[2] + (pb[2] - pa[2]) * k);
+    tLook.set(la[0] + (lb[0] - la[0]) * k, la[1] + (lb[1] - la[1]) * k, la[2] + (lb[2] - la[2]) * k);
+    const fov = a.fov + (b.fov - a.fov) * k;
 
-    // departure: truck pulls away toward the sun in the last stretch
-    const drive = Math.max(0, (pSm - 0.68) / 0.32);
-    const driveEase = drive * drive;
-    rig.position.x = driveEase * 26;
-    blob.position.x = rig.position.x;
-    tLook.x += rig.position.x * 0.55;
-
-    // camera with gentle parallax + idle drift
     camera.position.set(
       tPos.x + mouse.x * 0.5 + Math.sin(t * 0.16) * 0.18,
       tPos.y - mouse.y * 0.25 + Math.sin(t * 0.21) * 0.08,
@@ -461,15 +613,41 @@ export function initCinematicHero(container) {
     camera.lookAt(tLook);
     if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
 
-    // truck life: idle bob + wheels
-    const speed = REDUCED ? 0 : 2.2 + driveEase * 46;
-    for (const w of wheels) w.rotation.z -= (speed * dt) / 0.53;
-    rig.position.y = Math.sin(t * 7) * 0.008 * (1 + driveEase * 2);
+    // zone palette mix: w0 sunset, w1 dock, w2 gates
+    const w1 = smooth(clamp01((pSm - 0.26) / 0.16)) * (1 - smooth(clamp01((pSm - 0.56) / 0.14)));
+    const w2 = smooth(clamp01((pSm - 0.56) / 0.14));
+    const w0 = Math.max(0, 1 - w1 - w2);
+    for (const key of ['horizon', 'mid', 'top', 'fog']) {
+      mixed[key].setRGB(
+        PAL[0][key].r * w0 + PAL[1][key].r * w1 + PAL[2][key].r * w2,
+        PAL[0][key].g * w0 + PAL[1][key].g * w1 + PAL[2][key].g * w2,
+        PAL[0][key].b * w0 + PAL[1][key].b * w1 + PAL[2][key].b * w2
+      );
+    }
+    skyUniforms.uHorizon.value.copy(mixed.horizon);
+    skyUniforms.uMid.value.copy(mixed.mid);
+    skyUniforms.uTop.value.copy(mixed.top);
+    scene.fog.color.copy(mixed.fog);
+    sun.intensity = PAL[0].sunI * w0 + PAL[1].sunI * w1 + PAL[2].sunI * w2;
+    mixed.sunC.setRGB(
+      PAL[0].sunC.r * w0 + PAL[1].sunC.r * w1 + PAL[2].sunC.r * w2,
+      PAL[0].sunC.g * w0 + PAL[1].sunC.g * w1 + PAL[2].sunC.g * w2,
+      PAL[0].sunC.b * w0 + PAL[1].sunC.b * w1 + PAL[2].sunC.b * w2
+    );
+    sun.color.copy(mixed.sunC);
+    hemi.intensity = PAL[0].hemiI * w0 + PAL[1].hemiI * w1 + PAL[2].hemiI * w2;
+    const glow = PAL[0].glow * w0 + PAL[1].glow * w1 + PAL[2].glow * w2;
+    sunGlow.material.opacity = 0.95 * glow;
+    sunCore.material.opacity = glow;
+    // sun follows the journey so it always sits near the horizon ahead
+    sunGlow.position.set(26 + tx * 0.9, 7, -70);
+    sunCore.position.copy(sunGlow.position);
+    sun.position.set(26 + tx * 0.9, 8, -40);
 
-    // sun swells as the camera swings into it, headlights rise at dusk phase
-    const sunBoost = 1 + Math.sin(Math.min(pSm * 2, 1) * Math.PI) * 0.55;
-    sunGlow.scale.set(60 * sunBoost, 60 * sunBoost, 1);
-    sunGlow.material.opacity = 0.75 + 0.25 * sunBoost;
+    // wheels + idle bob
+    const wheelSpeed = REDUCED ? 0 : Math.max(speed, 1.6 * w0);
+    for (const w of wheels) w.rotation.z -= (wheelSpeed * dt) / 0.53;
+    rig.position.y = Math.sin(t * 7) * 0.008 * (1 + Math.min(speed * 0.08, 2));
 
     renderer.render(scene, camera);
     rafId = requestAnimationFrame(frame);

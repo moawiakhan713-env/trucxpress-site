@@ -290,6 +290,20 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
 }
 .hero-phase .btn { pointer-events: auto; margin-top: 30px; }
 
+/* ---- Full-bleed statement panel (journey end-card) ---- */
+.statement {
+  min-height: 72vh; display: grid; place-items: center; text-align: center;
+  padding: 90px 24px;
+  background:
+    radial-gradient(90% 130% at 50% -30%, rgba(255, 255, 255, 0.22), transparent 55%),
+    linear-gradient(160deg, #ffb31a, #f07f00 60%, #c85f00);
+  color: #1c1204;
+}
+.statement h2 { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 700; max-width: 1000px; letter-spacing: -0.02em; }
+.statement p { margin-top: 18px; font-size: clamp(1rem, 1.8vw, 1.25rem); color: rgba(28, 18, 4, 0.75); font-weight: 500; }
+.statement .btn { margin-top: 36px; background: #14100a; color: #ffcf7a; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3); }
+.statement .btn:hover { transform: translateY(-2px); }
+
 /* ---- Page hero (inner pages) ---- */
 .page-hero { position: relative; padding: calc(var(--nav-h) + 110px) 0 90px; overflow: hidden; }
 .page-hero .hero-canvas { opacity: 0.85; }

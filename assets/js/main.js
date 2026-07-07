@@ -112,18 +112,18 @@
         scrollTrigger: {
           trigger: cine,
           start: 'top top',
-          end: '+=280%',
+          end: '+=520%',
           scrub: 0.7,
           pin: true,
           onUpdate: (self) => { window.__heroP = self.progress; },
         },
       });
-      tl.to('.hero .scroll-hint', { autoAlpha: 0, duration: 0.05 }, 0.03)
-        .to('.hero-content', { autoAlpha: 0, y: -90, ease: 'power1.in', duration: 0.16 }, 0.06)
-        .fromTo('.hero-phase.p2', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.13, ease: 'power2.out' }, 0.28)
-        .to('.hero-phase.p2', { autoAlpha: 0, y: -70, duration: 0.11, ease: 'power1.in' }, 0.5)
-        .fromTo('.hero-phase.p3', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.13, ease: 'power2.out' }, 0.68)
-        .to('.hero-phase.p3', { autoAlpha: 0, duration: 0.09 }, 0.93);
+      tl.to('.hero .scroll-hint', { autoAlpha: 0, duration: 0.04 }, 0.02)
+        .to('.hero-content', { autoAlpha: 0, y: -90, ease: 'power1.in', duration: 0.12 }, 0.05)
+        .fromTo('.hero-phase.p2', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: 'power2.out' }, 0.33)
+        .to('.hero-phase.p2', { autoAlpha: 0, y: -70, duration: 0.09, ease: 'power1.in' }, 0.49)
+        .fromTo('.hero-phase.p3', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: 'power2.out' }, 0.74)
+        .to('.hero-phase.p3', { autoAlpha: 0, duration: 0.08 }, 0.92);
     }
 
     // parallax drift on decorated elements
