@@ -374,8 +374,8 @@ function loadTractorGlb(url) {
    light palettes crossfade between zones.
    ============================================================ */
 export function initCinematicHero(container) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -579,8 +579,15 @@ export function initCinematicHero(container) {
   const clock = new THREE.Clock();
   let rafId = null;
 
+  // stop burning GPU once the hero is scrolled out of view
+  let onScreen = true;
+  new IntersectionObserver(([e]) => {
+    onScreen = e.isIntersecting;
+    if (onScreen && rafId === null) frame();
+  }, { threshold: 0.01 }).observe(container);
+
   function frame() {
-    if (document.hidden) { rafId = null; return; }
+    if (document.hidden || !onScreen) { rafId = null; return; }
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
 

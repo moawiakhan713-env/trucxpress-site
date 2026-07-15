@@ -6,12 +6,11 @@
   <title>TrucXpress — Where Logistics Meets Reliability | Truck Dispatch Services</title>
   <meta name="description" content="Deliver more. Waste less. Every mile, every load. Commission-only freight dispatch backed by 24/7 tech & support. No upfront fees, no forced loads.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffb31a'/%3E%3Cpath d='M7 21h10l2-7h6l-2 7h2m-16 0a2 2 0 104 0m8 0a2 2 0 104 0M7 14h9' stroke='%2314100a' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
 </head>
 <body>
   <div class="page-glow"></div>
   <div class="grain"></div>
-  <div id="robot-side" aria-hidden="true"></div>
 
   <!-- ================= NAV ================= -->
   <header class="nav">
@@ -399,19 +398,15 @@
   </button>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="assets/vendor/gsap.min.js?v=3"></script>
-  <script src="assets/vendor/ScrollTrigger.min.js?v=3"></script>
-  <script src="assets/js/main.js?v=3"></script>
+  <script src="assets/vendor/gsap.min.js?v=4"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js?v=4"></script>
+  <script src="assets/js/main.js?v=4"></script>
   <script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
   <script type="module">
-    import { initCargoScene } from './assets/js/scene.js?v=3';
-    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=3';
-    import { initRobot } from './assets/js/robot.js?v=3';
+    import { initCargoScene } from './assets/js/scene.js?v=4';
+    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=4';
     try { initCinematicHero(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
     try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
-    if (window.matchMedia('(min-width: 1251px)').matches) {
-      try { initRobot(document.getElementById('robot-side')); } catch (e) { console.warn('WebGL robot disabled:', e); }
-    }
   </script>
 </body>
 </html>
