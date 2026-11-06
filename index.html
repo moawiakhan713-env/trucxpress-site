@@ -7,12 +7,12 @@
   <meta name="description" content="Deliver more. Waste less. Every mile, every load. Commission-only freight dispatch backed by 24/7 tech & support. No upfront fees, no forced loads.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffb31a'/%3E%3Cpath d='M7 21h10l2-7h6l-2 7h2m-16 0a2 2 0 104 0m8 0a2 2 0 104 0M7 14h9' stroke='%2314100a' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
-  <link rel="preload" href="assets/models/truck.glb?v=6" as="fetch" crossorigin>
+  <link rel="preload" href="assets/models/truck.glb?v=7" as="fetch" crossorigin>
   <link rel="preload" href="assets/vendor/draco/gltf/draco_decoder.wasm" as="fetch" crossorigin>
   <link rel="modulepreload" href="assets/vendor/three.module.min.js">
   <link rel="modulepreload" href="assets/vendor/three.core.min.js">
-  <link rel="modulepreload" href="assets/js/hero-cinematic.js?v=6">
-  <link rel="stylesheet" href="assets/css/style.css?v=6">
+  <link rel="modulepreload" href="assets/js/hero-cinematic.js?v=7">
+  <link rel="stylesheet" href="assets/css/style.css?v=7">
 </head>
 <body>
   <div class="page-glow"></div>
@@ -32,9 +32,9 @@
         <a href="index.html#faq">FAQ</a>
         <a href="blog.html">Blogs</a>
         <a href="contact.html">Contact Us</a>
-        <a href="contact.html" class="btn btn-primary btn-sm">Work With Us</a>
+        <a href="contact.html" class="btn btn-primary btn-sm" data-popup="hire">Work With Us</a>
       </nav>
-      <a href="contact.html" class="btn btn-primary btn-sm">Work With Us</a>
+      <a href="contact.html" class="btn btn-primary btn-sm" data-popup="hire">Work With Us</a>
       <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -49,10 +49,10 @@
         <h1 data-hero>Deliver More. Waste Less. <span class="grad">Every Mile, Every Load.</span></h1>
         <p class="hero-sub" data-hero>Commission-only freight dispatch backed by 24/7 tech &amp; support.</p>
         <div class="hero-ctas" data-hero>
-          <a href="contact.html" class="btn btn-primary">Hire Your Dispatcher
+          <a href="contact.html" class="btn btn-primary" data-popup="hire">Hire Your Dispatcher
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
           </a>
-          <a href="contact.html" class="btn btn-ghost">Check Availability</a>
+          <a href="contact.html" class="btn btn-ghost" data-popup="availability">Check Availability</a>
         </div>
         <div class="hero-stats" data-hero>
           <div class="stat-chip"><div class="num">0<span class="suffix">$</span></div><div class="lbl">Upfront fees</div></div>
@@ -71,7 +71,7 @@
       <div>
         <h2>Stay Loaded. <span class="grad">Stay Supported.</span></h2>
         <p>Commission-only dispatch. No upfront fees. No forced loads. No wasted time.</p>
-        <a href="contact.html" class="btn btn-primary">Get Dispatched Today
+        <a href="contact.html" class="btn btn-primary" data-popup="dispatch-today">Get Dispatched Today
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
         </a>
       </div>
@@ -86,7 +86,7 @@
         <span class="eyebrow">Live Dispatch</span>
         <h2>Loads on the Move — Right Now</h2>
       </div>
-      <div class="card tracker-card reveal" id="load-tracker">
+      <div class="card tracker-card no-tilt reveal" id="load-tracker">
         <div class="tracker-top">
           <span class="live-chip"><span class="live-dot"></span>LIVE</span>
           <span class="load-id">Load <strong id="trk-id">#PHX-4821</strong> · <span id="trk-equip">Dry Van</span></span>
@@ -129,7 +129,7 @@
     <div class="reveal">
       <h2>The future of freight starts today.</h2>
       <p>Commission-only dispatch, verified brokers, and a team that never sleeps.</p>
-      <a href="contact.html" class="btn">Work With Us
+      <a href="contact.html" class="btn" data-popup="hire">Work With Us
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
       </a>
     </div>
@@ -173,7 +173,7 @@
       <div class="cta-banner reveal">
         <h2>Stay Loaded. Stay Supported.</h2>
         <p>At TRUCXPRESS, we don't just book loads—we build partnerships.</p>
-        <a href="contact.html" class="btn btn-primary">Get Dispatched Today
+        <a href="contact.html" class="btn btn-primary" data-popup="dispatch-today">Get Dispatched Today
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
         </a>
         <div class="road-line"></div>
@@ -221,15 +221,15 @@
         <h2>What Type of Load Are You Looking For?</h2>
       </div>
       <div class="grid-3" data-stagger>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 34h46V22H2zM14 22v-6h14v6"/><path d="M48 20h12l8 8v6h-8"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30"/></svg></div><h3>Flatbed</h3><p>Construction, machinery &amp; oversized freight</p></div>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="46" height="28" rx="3"/><path d="M48 16h12l8 10v10h-8"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30M2 42h6"/></svg></div><h3>Dry Van</h3><p>General freight, retail &amp; consumer goods</p></div>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="46" height="28" rx="3"/><path d="M48 16h12l8 10v10h-8M12 16v12m8-12v12m8-12v12"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30"/></svg></div><h3>Reefer</h3><p>Temperature-controlled &amp; perishables</p></div>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M26 34h18l10-10h8v12h-6"/><path d="M44 24V16H30v18"/><circle cx="34" cy="42" r="6"/><circle cx="54" cy="42" r="6"/><path d="M40 42h8M26 34v8h2"/></svg></div><h3>Power Only</h3><p>Your tractor, our vetted trailers &amp; loads</p></div>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="34" height="24" rx="3"/><path d="M44 18h12l8 8v8h-6"/><path d="M44 34h-8"/><circle cx="22" cy="40" r="5"/><circle cx="52" cy="40" r="5"/><path d="M27 40h20M10 34v6h7"/></svg></div><h3>Box Truck</h3><p>Local &amp; regional straight-truck freight</p></div>
-        <div class="card equip-card"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 26h18v8H2zM20 34h26v-6H20"/><path d="M46 28h6l8 0 8 6v2h-6"/><circle cx="14" cy="42" r="5"/><circle cx="58" cy="42" r="5"/><path d="M19 42h34M2 42h7"/></svg></div><h3>Step Deck</h3><p>Tall &amp; heavy loads that won't fit a flatbed</p></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Flatbed" role="button" tabindex="0" aria-label="Find Flatbed loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 34h46V22H2zM14 22v-6h14v6"/><path d="M48 20h12l8 8v6h-8"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30"/></svg></div><h3>Flatbed</h3><p>Construction, machinery &amp; oversized freight</p><span class="equip-cta">Find loads →</span></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Dry Van" role="button" tabindex="0" aria-label="Find Dry Van loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="46" height="28" rx="3"/><path d="M48 16h12l8 10v10h-8"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30M2 42h6"/></svg></div><h3>Dry Van</h3><p>General freight, retail &amp; consumer goods</p><span class="equip-cta">Find loads →</span></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Reefer" role="button" tabindex="0" aria-label="Find Reefer loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="46" height="28" rx="3"/><path d="M48 16h12l8 10v10h-8M12 16v12m8-12v12m8-12v12"/><circle cx="14" cy="42" r="6"/><circle cx="56" cy="42" r="6"/><path d="M20 42h30"/></svg></div><h3>Reefer</h3><p>Temperature-controlled &amp; perishables</p><span class="equip-cta">Find loads →</span></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Power Only" role="button" tabindex="0" aria-label="Find Power Only loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M26 34h18l10-10h8v12h-6"/><path d="M44 24V16H30v18"/><circle cx="34" cy="42" r="6"/><circle cx="54" cy="42" r="6"/><path d="M40 42h8M26 34v8h2"/></svg></div><h3>Power Only</h3><p>Your tractor, our vetted trailers &amp; loads</p><span class="equip-cta">Find loads →</span></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Box Truck" role="button" tabindex="0" aria-label="Find Box Truck loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="34" height="24" rx="3"/><path d="M44 18h12l8 8v8h-6"/><path d="M44 34h-8"/><circle cx="22" cy="40" r="5"/><circle cx="52" cy="40" r="5"/><path d="M27 40h20M10 34v6h7"/></svg></div><h3>Box Truck</h3><p>Local &amp; regional straight-truck freight</p><span class="equip-cta">Find loads →</span></div>
+        <div class="card equip-card" data-popup="findload" data-equipment="Step Deck" role="button" tabindex="0" aria-label="Find Step Deck loads"><div class="equip-art"><svg width="72" height="52" viewBox="0 0 72 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 26h18v8H2zM20 34h26v-6H20"/><path d="M46 28h6l8 0 8 6v2h-6"/><circle cx="14" cy="42" r="5"/><circle cx="58" cy="42" r="5"/><path d="M19 42h34M2 42h7"/></svg></div><h3>Step Deck</h3><p>Tall &amp; heavy loads that won't fit a flatbed</p><span class="equip-cta">Find loads →</span></div>
       </div>
       <div style="text-align:center;margin-top:48px" class="reveal">
-        <a href="contact.html" class="btn btn-primary">Find Now
+        <a href="contact.html" class="btn btn-primary" data-popup="findload">Find Now
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
         </a>
       </div>
@@ -291,7 +291,7 @@
           <div class="card contact-line"><span class="c-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><div><strong>Email Us</strong><a href="mailto:info@trucxpress.com">info@trucxpress.com</a></div></div>
           <div class="card contact-line"><span class="c-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><div><strong>Visit Us</strong><span class="val">4539 N 22nd St, Ste R, Phoenix, AZ 85016</span></div></div>
         </div>
-        <form class="card form reveal-r" id="contact-form" data-email="info@trucxpress.com">
+        <form class="card form no-tilt reveal-r" id="contact-form" data-email="info@trucxpress.com">
           <div class="form-row">
             <div class="field"><label for="f-first">First Name</label><input id="f-first" name="first_name" type="text" placeholder="John" required></div>
             <div class="field"><label for="f-last">Last Name</label><input id="f-last" name="last_name" type="text" placeholder="Carter" required></div>
@@ -428,12 +428,13 @@
   </button>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="assets/vendor/gsap.min.js?v=6"></script>
-  <script src="assets/vendor/ScrollTrigger.min.js?v=6"></script>
-  <script src="assets/js/main.js?v=6"></script>
+  <script src="assets/vendor/gsap.min.js?v=7"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js?v=7"></script>
+  <script src="assets/js/main.js?v=7"></script>
+  <script src="assets/js/popup.js?v=7"></script>
   <script type="module">
-    import { initCargoScene } from './assets/js/scene.js?v=6';
-    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=6';
+    import { initCargoScene } from './assets/js/scene.js?v=7';
+    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=7';
     try { initCinematicHero(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
     try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
   </script>

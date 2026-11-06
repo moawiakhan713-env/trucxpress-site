@@ -47,7 +47,7 @@
       const x = e.clientX - r.left, y = e.clientY - r.top;
       card.style.setProperty('--mx', `${x}px`);
       card.style.setProperty('--my', `${y}px`);
-      if (finePointer && !REDUCED && card.classList.contains('tilt')) {
+      if (finePointer && !REDUCED && !card.classList.contains('no-tilt') && !card.closest('.hiw')) {
         const rx = ((y / r.height) - 0.5) * -8;
         const ry = ((x / r.width) - 0.5) * 10;
         card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
@@ -295,21 +295,6 @@
       }
     }, { threshold: 0.35 });
     trackerIO.observe(tracker);
-  }
-
-  /* ---- contact form (no backend yet: builds a mailto) ---- */
-  const form = document.querySelector('#contact-form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const name = `${data.get('first_name') || ''} ${data.get('last_name') || ''}`.trim() || 'website';
-      const subject = encodeURIComponent(`Dispatch inquiry from ${name}`);
-      const body = encodeURIComponent(
-        `Name: ${name}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email')}\n\n${data.get('message')}`
-      );
-      window.location.href = `mailto:${form.dataset.email || 'info@trucxpress.com'}?subject=${subject}&body=${body}`;
-    });
   }
 
   /* ---- footer year ---- */
