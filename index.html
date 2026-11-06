@@ -7,12 +7,12 @@
   <meta name="description" content="Deliver more. Waste less. Every mile, every load. Commission-only freight dispatch backed by 24/7 tech & support. No upfront fees, no forced loads.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffb31a'/%3E%3Cpath d='M7 21h10l2-7h6l-2 7h2m-16 0a2 2 0 104 0m8 0a2 2 0 104 0M7 14h9' stroke='%2314100a' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
-  <link rel="preload" href="assets/models/truck.glb?v=5" as="fetch" crossorigin>
+  <link rel="preload" href="assets/models/truck.glb?v=6" as="fetch" crossorigin>
   <link rel="preload" href="assets/vendor/draco/gltf/draco_decoder.wasm" as="fetch" crossorigin>
   <link rel="modulepreload" href="assets/vendor/three.module.min.js">
   <link rel="modulepreload" href="assets/vendor/three.core.min.js">
-  <link rel="modulepreload" href="assets/js/hero-cinematic.js?v=5">
-  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <link rel="modulepreload" href="assets/js/hero-cinematic.js?v=6">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body>
   <div class="page-glow"></div>
@@ -237,18 +237,42 @@
   </section>
 
   <!-- ================= HOW IT WORKS ================= -->
-  <section class="section steps" id="how-it-works">
+  <section class="section steps hiw" id="how-it-works">
     <div class="container">
       <div class="section-head center reveal">
         <span class="eyebrow">How It Works</span>
         <h2>From Signup to Rolling in Four Steps</h2>
       </div>
-      <div class="step-line" aria-hidden="true"><span class="spark"></span></div>
-      <div class="grid-4" data-stagger>
-        <div class="step"><div class="orb">1</div><h3>Sign Up</h3><p>Reach out and tell us about your truck, your MC, and the lanes you want to run.</p></div>
-        <div class="step"><div class="orb">2</div><h3>Get Verified</h3><p>We collect your documents and complete your carrier setup for dispatch readiness.</p></div>
-        <div class="step"><div class="orb">3</div><h3>Start Dispatching</h3><p>Your dedicated dispatcher finds vetted, top-paying freight and negotiates the rate.</p></div>
-        <div class="step"><div class="orb">4</div><h3>Drive &amp; Earn</h3><p>You stay on the road while we handle paperwork, updates and coordination.</p></div>
+      <div class="hiw-route" aria-hidden="true">
+        <div class="track"></div>
+        <div class="fill" id="hiw-fill"></div>
+        <div class="truck" id="hiw-truck"><svg viewBox="0 0 34 20" fill="currentColor"><path d="M1 12h14V2H1v10zm15-7h6l5 5v4h-2.2a3 3 0 0 0-5.6 0h-3.2V5zM4 15.5A2.5 2.5 0 1 0 4 15.49zm8 0A2.5 2.5 0 1 0 12 15.49zm14 0A2.5 2.5 0 1 0 26 15.49z"/></svg></div>
+      </div>
+      <div class="grid-4" id="hiw-steps" data-stagger>
+        <div class="step" tabindex="0">
+          <div class="orb"><span class="num">1</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6m3-3h-6"/></svg><svg class="ck" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Sign Up</h3><p>Reach out and tell us about your truck, your MC, and the lanes you want to run.</p>
+          <div class="detail"><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Call or fill the contact form</span><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Share lanes and equipment</span></div>
+          <span class="status"></span>
+        </div>
+        <div class="step" tabindex="0">
+          <div class="orb"><span class="num">2</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><svg class="ck" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Get Verified</h3><p>We collect your documents and complete your carrier setup for dispatch readiness.</p>
+          <div class="detail"><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>MC authority, W-9, insurance</span><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Carrier packets handled</span></div>
+          <span class="status"></span>
+        </div>
+        <div class="step" tabindex="0">
+          <div class="orb"><span class="num">3</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg><svg class="ck" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Start Dispatching</h3><p>Your dedicated dispatcher finds vetted, top-paying freight and negotiates the rate.</p>
+          <div class="detail"><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Brokers vetted first</span><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>You approve every load</span></div>
+          <span class="status"></span>
+        </div>
+        <div class="step" tabindex="0">
+          <div class="orb"><span class="num">4</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><svg class="ck" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Drive &amp; Earn</h3><p>You stay on the road while we handle paperwork, updates and coordination.</p>
+          <div class="detail"><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Updates and ETAs handled</span><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Commission only, no upfront fee</span></div>
+          <span class="status"></span>
+        </div>
       </div>
     </div>
   </section>
@@ -404,12 +428,12 @@
   </button>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="assets/vendor/gsap.min.js?v=5"></script>
-  <script src="assets/vendor/ScrollTrigger.min.js?v=5"></script>
-  <script src="assets/js/main.js?v=5"></script>
+  <script src="assets/vendor/gsap.min.js?v=6"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js?v=6"></script>
+  <script src="assets/js/main.js?v=6"></script>
   <script type="module">
-    import { initCargoScene } from './assets/js/scene.js?v=5';
-    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=5';
+    import { initCargoScene } from './assets/js/scene.js?v=6';
+    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=6';
     try { initCinematicHero(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
     try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
   </script>

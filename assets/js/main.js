@@ -167,6 +167,52 @@
     counters.forEach((el) => io.observe(el));
   }
 
+  /* ---- How It Works: route truck, step states, tilt cards ---- */
+  const hiwGrid = document.getElementById('hiw-steps');
+  if (hiwGrid) {
+    const hiwSteps = Array.from(hiwGrid.querySelectorAll('.step'));
+    const hiwFill = document.getElementById('hiw-fill');
+    const hiwTruck = document.getElementById('hiw-truck');
+    const total = hiwSteps.length;
+    const fourCols = () => getComputedStyle(hiwGrid).gridTemplateColumns.split(' ').length === total;
+
+    const setStep = (idx) => {
+      hiwSteps.forEach((s, i) => {
+        s.classList.toggle('done', idx >= 0 && i < idx);
+        s.classList.toggle('active', i === idx);
+        s.querySelector('.status').textContent =
+          i < idx ? 'Completed' : i === idx ? `Step ${i + 1} of ${total}` : '';
+      });
+      let pct = 0;
+      if (idx >= 0) pct = fourCols() ? idx * (100 / total) : ((idx + 1) / total) * 100;
+      hiwFill.style.width = pct + '%';
+      // orb centres sit at 12.5% + n * 25% when the steps form one row
+      hiwTruck.style.left = (fourCols() ? 50 / total + pct : pct) + '%';
+    };
+    hiwSteps.forEach((s, i) => {
+      s.addEventListener('pointerenter', () => setStep(i));
+      s.addEventListener('focus', () => setStep(i));
+      s.addEventListener('click', () => setStep(i));
+    });
+    hiwGrid.addEventListener('pointerleave', () => setStep(-1));
+    window.addEventListener('resize', () => setStep(hiwSteps.findIndex((s) => s.classList.contains('active'))));
+
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    hiwSteps.forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left, y = e.clientY - r.top;
+        card.style.setProperty('--mx', x + 'px');
+        card.style.setProperty('--my', y + 'px');
+        if (fine && !REDUCED) {
+          card.style.transform =
+            `rotateX(${((y / r.height) - 0.5) * -10}deg) rotateY(${((x / r.width) - 0.5) * 12}deg) translateY(-6px)`;
+        }
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  }
+
   /* ---- live load tracker ---- */
   const tracker = document.querySelector('#load-tracker');
   if (tracker) {

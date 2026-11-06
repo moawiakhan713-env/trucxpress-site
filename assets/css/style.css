@@ -289,6 +289,78 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
 }
 .hero-phase .btn { pointer-events: auto; margin-top: 30px; }
 
+/* ---- How It Works: route truck + tilt cards + amber orb ---- */
+.hiw { --ok: #5ee8a4; }
+.hiw-route { position: relative; height: 34px; margin-bottom: 6px; }
+.hiw-route .track, .hiw-route .fill { position: absolute; top: 22px; height: 4px; border-radius: 4px; }
+.hiw-route .track { left: 12.5%; right: 12.5%; background: var(--stroke-strong); }
+.hiw-route .fill {
+  left: 12.5%; width: 0;
+  background: linear-gradient(90deg, #b97700, var(--amber), #ffd97a);
+  box-shadow: 0 0 14px rgba(255, 179, 26, 0.6);
+  transition: width 0.7s var(--ease-out);
+}
+.hiw-route .truck {
+  position: absolute; top: 2px; left: 12.5%; transform: translateX(-50%);
+  color: var(--amber); transition: left 0.7s var(--ease-out);
+  filter: drop-shadow(0 2px 8px rgba(255, 179, 26, 0.55));
+}
+.hiw-route .truck svg { width: 34px; height: 20px; }
+.hiw .grid-4 { perspective: 900px; }
+.hiw .step {
+  position: relative; border-radius: var(--radius); outline: none; cursor: pointer; overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--stroke);
+  transform-style: preserve-3d;
+  transition: transform 0.25s var(--ease-out), border-color 0.4s, box-shadow 0.4s;
+}
+.hiw .step::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 179, 26, 0.16), transparent 60%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.hiw .step .orb { transform: translateZ(24px); transition: background 0.45s var(--ease-out), border-color 0.45s, color 0.45s, box-shadow 0.45s; }
+.hiw .step .orb::before {
+  content: ''; position: absolute; inset: -9px; border-radius: 50%;
+  border: 2px solid var(--amber); opacity: 0;
+}
+.hiw .orb .num, .hiw .orb .ic, .hiw .orb .ck { position: absolute; transition: transform 0.45s var(--ease-out), opacity 0.3s; }
+.hiw .orb .ic, .hiw .orb .ck { width: 26px; height: 26px; opacity: 0; transform: rotate(-90deg) scale(0.4); }
+.hiw .detail {
+  display: grid; gap: 6px; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0;
+  transition: max-height 0.45s var(--ease-out), opacity 0.35s, margin-top 0.45s var(--ease-out);
+}
+.hiw .detail span { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.84rem; color: var(--text-hi); }
+.hiw .detail svg { width: 14px; height: 14px; color: var(--amber); flex: none; }
+.hiw .status {
+  display: inline-block; margin-top: 12px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px; opacity: 0; transform: translateY(6px);
+  transition: opacity 0.35s, transform 0.35s var(--ease-out);
+}
+.hiw .status:empty { visibility: hidden; }
+.hiw .step.done .orb { background: rgba(94, 232, 164, 0.12); border-color: var(--ok); color: var(--ok); }
+.hiw .step.done .orb .num { opacity: 0; transform: rotate(90deg) scale(0.4); }
+.hiw .step.done .orb .ck { opacity: 1; transform: none; }
+.hiw .step.done .status { opacity: 1; transform: none; color: var(--ok); border: 1px solid rgba(94, 232, 164, 0.35); }
+.hiw .step.active { border-color: rgba(255, 179, 26, 0.45); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5); }
+.hiw .step.active::before { opacity: 1; }
+.hiw .step.active .orb {
+  background: linear-gradient(135deg, var(--amber), #ff8a00); border-color: transparent;
+  color: #171105; box-shadow: 0 0 34px rgba(255, 179, 26, 0.55);
+}
+.hiw .step.active .orb::before { animation: hiw-ring 1.4s var(--ease-out) infinite; }
+.hiw .step.active .orb .num { opacity: 0; transform: rotate(90deg) scale(0.4); }
+.hiw .step.active .orb .ic { opacity: 1; transform: none; }
+.hiw .step.active h3 { color: var(--amber); }
+.hiw .step.active .detail { max-height: 80px; opacity: 1; margin-top: 14px; }
+.hiw .step.active .status { opacity: 1; transform: none; color: var(--amber); border: 1px solid rgba(255, 179, 26, 0.4); }
+.hiw .step h3 { transition: color 0.35s var(--ease-out); }
+@keyframes hiw-ring { 0% { opacity: 0.9; transform: scale(0.85); } 100% { opacity: 0; transform: scale(1.35); } }
+@media (max-width: 1024px) {
+  .hiw-route .track, .hiw-route .fill, .hiw-route .truck { left: 0; }
+  .hiw-route .track { right: 0; }
+}
+
 /* ---- Live load tracker ---- */
 .tracker-card { max-width: 920px; margin-inline: auto; padding: 34px 38px 30px; transition: opacity 0.45s; }
 .tracker-card.switching { opacity: 0.15; }
