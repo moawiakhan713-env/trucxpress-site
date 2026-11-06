@@ -9,3 +9,12 @@
     Header set Cache-Control "public, max-age=2592000, immutable"
   </FilesMatch>
 </IfModule>
+
+# Compress text assets (Three.js, CSS, HTML, decoder) on the fly
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/wasm
+</IfModule>
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+  AddType model/gltf-binary .glb
+</IfModule>

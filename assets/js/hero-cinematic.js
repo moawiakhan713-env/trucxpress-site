@@ -334,13 +334,10 @@ const GLB_LENGTH = 5.6;          // target tractor length in scene units
 const GLB_REAR_X = 0.9;          // where the tractor's rear lands (under trailer nose)
 
 function loadTractorGlb(url) {
-  return fetch(url, { method: 'HEAD' })
-    .then((r) => {
-      if (!r.ok) throw 0;
-      const draco = new DRACOLoader().setDecoderPath('assets/vendor/draco/gltf/');
-      const loader = new GLTFLoader().setDRACOLoader(draco);
-      return new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject));
-    })
+  const draco = new DRACOLoader().setDecoderPath('assets/vendor/draco/gltf/');
+  draco.preload();
+  const loader = new GLTFLoader().setDRACOLoader(draco);
+  return new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject))
     .then((gltf) => {
       const model = gltf.scene;
       const holder = new THREE.Group();
@@ -366,6 +363,9 @@ function loadTractorGlb(url) {
       return holder;
     });
 }
+
+// start downloading the red tractor immediately, in parallel with scene setup
+const tractorPromise = loadTractorGlb('assets/models/truck.glb?v=5');
 
 /* ============================================================
    The journey: sunset yard -> night dock grid -> numbered gates.
@@ -523,14 +523,28 @@ export function initCinematicHero(container) {
   scene.add(rig);
   const proc = buildTruck();
   rig.add(proc.truck);
-  let wheels = [...proc.trailerWheels, ...proc.tractorWheels];
+  let wheels = [...proc.trailerWheels];
 
-  loadTractorGlb('assets/models/truck.glb').then((tractorModel) => {
-    proc.truck.remove(proc.tractor);
-    proc.truck.remove(proc.tractorRolling);
+  // never show the placeholder cab: keep the rig hidden until the red
+  // tractor is in; only fall back to the procedural cab if loading fails
+  rig.visible = false;
+  proc.truck.remove(proc.tractor);
+  proc.truck.remove(proc.tractorRolling);
+  let rigShown = false;
+  blob.visible = false;
+  const showRig = () => { rigShown = true; rig.visible = true; blob.visible = true; };
+  const useFallbackCab = () => {
+    if (rigShown) return;
+    proc.truck.add(proc.tractor, proc.tractorRolling);
+    wheels = [...proc.trailerWheels, ...proc.tractorWheels];
+    showRig();
+  };
+  tractorPromise.then((tractorModel) => {
+    if (rigShown) return;
     proc.truck.add(tractorModel);
-    wheels = [...proc.trailerWheels];
-  }).catch(() => { /* keep procedural tractor */ });
+    showRig();
+  }).catch(useFallbackCab);
+  setTimeout(useFallbackCab, 20000);
 
   /* ---- interaction ---- */
   const mouse = { x: 0, y: 0 };
