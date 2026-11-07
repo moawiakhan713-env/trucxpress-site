@@ -2,8 +2,11 @@
    TRUCXPRESS — request popup
    Any element with data-popup="<form key>" opens a dialog whose
    fields match that button's purpose. Submissions go to send.php
-   (Hostinger PHP mail); if that is unavailable the visitor's email
-   app opens with every answer filled in.
+   (Hostinger), which emails info@trucxpress.com. If that fails the
+   visitor gets one-click Gmail / Outlook / copy options with every
+   answer filled in, never a silent mailto. Every mailto: link on the
+   site opens the same chooser, because a mailto link does nothing on
+   a computer with no email app set up.
    ============================================================ */
 (function () {
   'use strict';
@@ -183,7 +186,7 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!validate(form)) return;
-      send(form, key, title, (mode, data) => showDone(mode, data));
+      send(form, key, title, (mode, data) => showDone(mode, data, title));
     });
     lockScroll(true);
     dlg.showModal();
@@ -235,42 +238,137 @@
   function send(form, key, title, done) {
     const btn = form.querySelector('[type=submit]');
     btn.disabled = true;
+    const label = btn.innerHTML;
+    btn.innerHTML = 'Sending…';
     const data = new FormData(form);
     data.append('form_type', key);
     data.append('form_title', title);
     data.append('page', location.pathname);
     data.append('elapsed_ms', String(Date.now() - openedAt));
     const fields = readable(form);
-    fetch('send.php', { method: 'POST', body: data })
+    fetch('send.php', { method: 'POST', body: data, headers: { Accept: 'application/json' } })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((j) => (j && j.ok ? done('sent', fields) : Promise.reject('mail')))
-      .catch(() => {
-        const name = fields.find(([k]) => /name/i.test(k));
-        const subject = `TrucXpress: ${title}${name ? ' - ' + name[1] : ''}`;
-        const body = fields.map(([k, v]) => `${k}: ${v}`).join('\n');
-        window.location.href = `mailto:${INBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        done('mailto', fields);
-      })
-      .finally(() => { btn.disabled = false; });
+      .catch(() => done('fallback', fields, title))
+      .finally(() => { btn.disabled = false; btn.innerHTML = label; });
   }
 
-  function doneHTML(mode, fields) {
-    const name = (fields.find(([k]) => /name/i.test(k)) || [])[1] || '';
+  /* ---- email helpers (used by the fallback and by every mailto link) ---- */
+  const enc = encodeURIComponent;
+  function mailLinks(to, subject, body) {
+    const q = (pairs) => pairs.filter(([, v]) => v).map(([k, v]) => `${k}=${enc(v)}`).join('&');
+    return {
+      gmail: `https://mail.google.com/mail/?view=cm&fs=1&${q([['to', to], ['su', subject], ['body', body]])}`,
+      outlook: `https://outlook.live.com/mail/0/deeplink/compose?${q([['to', to], ['subject', subject], ['body', body]])}`,
+      app: `mailto:${to}${subject || body ? '?' + q([['subject', subject], ['body', body]]) : ''}`,
+    };
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((res, rej) => {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? res() : rej(); } catch (err) { rej(err); }
+      ta.remove();
+    });
+  }
+  const I = {
+    gmail: svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/>'),
+    outlook: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/><path d="M8 19v-3"/>'),
+    app: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'),
+    copy: svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
+    phone: svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>'),
+  };
+  function pickHTML(links, copyLabel) {
+    return `<div class="tx-pick">
+        <a class="tx-pick-btn" href="${links.gmail}" target="_blank" rel="noopener">${I.gmail}<span>Gmail</span></a>
+        <a class="tx-pick-btn" href="${links.outlook}" target="_blank" rel="noopener">${I.outlook}<span>Outlook / Hotmail</span></a>
+        <a class="tx-pick-btn" href="${links.app}" data-mail-app>${I.app}<span>Email app</span></a>
+        <button type="button" class="tx-pick-btn" data-copy>${I.copy}<span>${esc(copyLabel)}</span></button>
+      </div>`;
+  }
+  function wireCopy(root, text, label) {
+    const b = root.querySelector('[data-copy]');
+    if (!b) return;
+    b.addEventListener('click', () => {
+      const span = b.querySelector('span');
+      copyText(text)
+        .then(() => { span.textContent = 'Copied ✓'; })
+        .catch(() => { span.textContent = 'Copy failed: ' + INBOX; })
+        .finally(() => setTimeout(() => { span.textContent = label; }, 2600));
+    });
+  }
+  const isLocal = /^(localhost|127\.|0\.0\.0\.0|\[::1\]|192\.168\.|10\.)/.test(location.hostname) || location.protocol === 'file:';
+
+  function doneHTML(mode, fields, title) {
+    const get = (k) => (fields.find(([f]) => f === k) || [])[1] || '';
+    const name = get('Full name') || [get('First name'), get('Last name')].filter(Boolean).join(' ');
     const first = name.split(' ')[0];
     const phone = (fields.find(([k]) => k === 'Phone') || [])[1];
-    const msg = mode === 'sent'
-      ? `Thanks${first ? ', ' + esc(first) : ''}. A TrucXpress dispatcher will contact you${phone ? ' at ' + esc(phone) : ''}.`
-      : 'Your email app opened with your answers filled in. Press send there and we will get back to you.';
-    return `<div class="tx-tick">${svg('<path d="M20 6 9 17l-5-5"/>')}</div>
-      <h2>${mode === 'sent' ? 'Request received' : 'Almost done'}</h2>
-      <p>${msg}</p>`;
+    if (mode === 'sent') {
+      return `<div class="tx-tick">${svg('<path d="M20 6 9 17l-5-5"/>')}</div>
+        <h2>Request received</h2>
+        <p>Thanks${first ? ', ' + esc(first) : ''}. A TrucXpress dispatcher will contact you${phone ? ' at ' + esc(phone) : ''}.</p>`;
+    }
+    const subject = `TrucXpress: ${title}${name ? ' - ' + name : ''}`;
+    const body = fields.map(([k, v]) => `${k}: ${v}`).join('\n');
+    return `<div class="tx-tick tx-warn">${svg('<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>')}</div>
+      <h2>One more click to send</h2>
+      <p>Our form could not send this automatically. Pick how you email and your answers are already filled in, or copy them and send to <strong>${INBOX}</strong>.</p>
+      ${pickHTML(mailLinks(INBOX, subject, body), 'Copy my answers')}
+      <p class="tx-call">${I.phone} Faster: call <a href="tel:+19286132787">${PHONE}</a></p>
+      ${isLocal ? '<p class="tx-note">Preview note: the form only sends on the live website, not on a local copy.</p>' : ''}
+      <textarea hidden data-copy-src>${esc(`To: ${INBOX}\nSubject: ${subject}\n\n${body}`)}</textarea>`;
+  }
+  function wireDone(root) {
+    const src = root.querySelector('[data-copy-src]');
+    if (src) wireCopy(root, src.value, 'Copy my answers');
   }
 
-  function showDone(mode, fields) {
-    dlg.querySelector('.tx-body').outerHTML = `<div class="tx-done">${doneHTML(mode, fields)}
+  function showDone(mode, fields, title) {
+    dlg.querySelector('.tx-body').outerHTML = `<div class="tx-done">${doneHTML(mode, fields, title)}
       <button type="button" class="btn btn-ghost tx-ok">Close</button></div>`;
+    wireDone(dlg.querySelector('.tx-done'));
     dlg.querySelector('.tx-ok').addEventListener('click', close);
   }
+
+  /* ---- mailto chooser: works with or without an email app ---- */
+  const picker = document.createElement('dialog');
+  picker.className = 'tx-modal tx-mailpick';
+  picker.setAttribute('aria-labelledby', 'tx-mp-title');
+  document.body.appendChild(picker);
+  function openMailPicker(href, trigger) {
+    const url = new URL(href);
+    const to = decodeURIComponent(url.pathname) || INBOX;
+    const p = url.searchParams;
+    picker.innerHTML = `<div class="tx-mp-inner">
+        <button type="button" class="tx-close" aria-label="Close">${svg('<path d="M18 6 6 18M6 6l12 12"/>')}</button>
+        <span class="tx-eyebrow">Email us</span>
+        <h2 id="tx-mp-title">${esc(to)}</h2>
+        <p>Choose how you want to write to us.</p>
+        ${pickHTML(mailLinks(to, p.get('subject') || '', p.get('body') || ''), 'Copy address')}
+      </div>`;
+    picker.querySelector('.tx-close').addEventListener('click', () => picker.close());
+    picker.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(() => picker.close(), 150)));
+    wireCopy(picker, to, 'Copy address');
+    picker._trigger = trigger;
+    lockScroll(true);
+    picker.showModal();
+  }
+  picker.addEventListener('close', () => {
+    if (!dlg.open) lockScroll(false);
+    if (picker._trigger) picker._trigger.focus({ preventScroll: true });
+  });
+  picker.addEventListener('click', (e) => { if (e.target === picker) picker.close(); });
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="mailto:"]');
+    if (!a || a.hasAttribute('data-mail-app') || e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    openMailPicker(a.href, a);
+  });
 
   /* ---- triggers ---- */
   document.addEventListener('click', (e) => {
@@ -293,8 +391,9 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
       openedAt = openedAt || Date.now() - 5000;
-      send(form, 'contact', 'Contact form', (mode, fields) => {
-        form.innerHTML = `<div class="tx-done" style="padding:20px 0">${doneHTML(mode, fields)}</div>`;
+      send(form, 'contact', 'Contact form', (mode, fields, title) => {
+        form.innerHTML = `<div class="tx-done" style="padding:20px 0">${doneHTML(mode, fields, title)}</div>`;
+        wireDone(form);
       });
     });
   });

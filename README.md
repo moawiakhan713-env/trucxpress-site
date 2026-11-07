@@ -32,12 +32,29 @@ python3 -m http.server 8080
 (A server is required because the 3D module uses ES-module imports; opening
 `index.html` via `file://` won't load them.)
 
-## Before go-live
+## Contact form email
 
-See `CONTENT-TODO.md` — phone, email, stats, and testimonials are placeholders
-pending the real site content. The contact form currently opens the visitor's
-email client (`mailto:`); wire it to a form service (Formspree, Basin, or your
-host's forms) for production.
+Every form (the popups and the contact form) posts to `send.php`, which emails
+**info@trucxpress.com**. It only works on the live Hostinger site: a local
+preview has no PHP, so there the form shows its fallback (Gmail / Outlook /
+copy / call buttons with the answers filled in).
+
+`send.php` delivers in this order:
+
+1. **SMTP** with the info@ mailbox login, if `send-config.php` exists. Most
+   reliable. Copy `tools/send-config.sample.php`, rename it `send-config.php`,
+   put the mailbox password in it, and upload it with hPanel File Manager to
+   the folder **above** `public_html`. Never commit it (it is in `.gitignore`).
+2. **PHP `mail()`**, sent from info@trucxpress.com.
+
+Every request is also saved to `trucxpress-leads/leads-YYYY-MM.txt` in the
+folder above `public_html` (not reachable from the web), so a lead is never
+lost even if email fails. If nothing arrives: check that the info@ mailbox
+exists in hPanel → Emails, check Spam, and look in that leads folder.
+
+Every `mailto:` link opens a small chooser (Gmail, Outlook, email app, copy
+address), because a plain mailto link does nothing on a computer without an
+email app set up.
 
 ## Accessibility & performance
 

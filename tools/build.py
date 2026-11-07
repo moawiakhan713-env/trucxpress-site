@@ -49,7 +49,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'content'
 SITE = 'https://trucxpress.com'
 OG = SITE + '/assets/img/og-image.jpg'
-V = '8'  # asset cache-busting version
+V = '9'  # asset cache-busting version
 TODAY = date.today().isoformat()
 
 AUTHORS = {

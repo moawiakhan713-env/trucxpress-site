@@ -41,3 +41,8 @@
   AddType application/wasm .wasm
   AddType model/gltf-binary .glb
 </IfModule>
+
+# Mail settings file (if the owner puts it here instead of above public_html)
+<Files "send-config.php">
+  Require all denied
+</Files>

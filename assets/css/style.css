@@ -499,6 +499,27 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
 @keyframes tx-pop { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
 .tx-done h2 { font-size: 1.5rem; }
 .tx-done p { color: var(--text-mid); max-width: 44ch; }
+.tx-done .tx-tick.tx-warn { background: rgba(255, 179, 26, 0.12); border-color: var(--amber); color: var(--amber); }
+.tx-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 440px; margin-top: 6px; }
+.tx-pick-btn {
+  display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-radius: 12px; font: inherit;
+  font-size: 0.9rem; font-weight: 600; color: var(--text-hi); text-align: left; cursor: pointer;
+  border: 1px solid var(--stroke-strong); background: rgba(255, 255, 255, 0.04);
+  transition: border-color 0.2s, background 0.2s, transform 0.25s var(--ease-out);
+}
+.tx-pick-btn svg { width: 20px; height: 20px; flex: none; color: var(--amber); }
+.tx-pick-btn:hover, .tx-pick-btn:focus-visible { border-color: var(--amber); background: rgba(255, 179, 26, 0.08); transform: translateY(-2px); outline: none; }
+.tx-done .tx-call { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-top: 4px; }
+.tx-done .tx-call svg { width: 16px; height: 16px; color: var(--cyan); }
+.tx-done .tx-call a { color: var(--text-hi); font-weight: 600; }
+.tx-done .tx-note { font-size: 0.8rem; color: var(--text-lo); }
+.tx-mailpick { width: min(460px, calc(100% - 32px)); }
+.tx-mp-inner { padding: 30px 28px 28px; position: relative; display: grid; gap: 8px; }
+.tx-mp-inner .tx-eyebrow { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); }
+.tx-mp-inner h2 { font-size: 1.35rem; word-break: break-all; padding-right: 44px; }
+.tx-mp-inner p { color: var(--text-mid); font-size: 0.92rem; margin-bottom: 8px; }
+.tx-mp-inner .tx-pick { max-width: none; }
+@media (max-width: 420px) { .tx-pick { grid-template-columns: 1fr; } }
 @media (max-width: 600px) {
   .tx-modal { width: 100%; max-width: 100%; max-height: 92vh; margin: auto 0 0; border-radius: 22px 22px 0 0; }
   .tx-head { padding: 24px 20px 18px; }
