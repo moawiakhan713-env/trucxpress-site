@@ -1,3 +1,26 @@
+# TrucXpress — canonical host and old WordPress URLs
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # one canonical address: https://trucxpress.com
+  RewriteCond %{HTTP_HOST} ^www\.trucxpress\.com$ [NC]
+  RewriteRule ^(.*)$ https://trucxpress.com/$1 [R=301,L]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://trucxpress.com/$1 [R=301,L]
+
+  # pages that Google indexed on the old WordPress site
+  RewriteRule ^our-services/?$ https://trucxpress.com/our-services.html [R=301,L,NC]
+  RewriteRule ^services/?$ https://trucxpress.com/our-services.html [R=301,L,NC]
+  RewriteRule ^about-us/?$ https://trucxpress.com/about-us.html [R=301,L,NC]
+  RewriteRule ^about/?$ https://trucxpress.com/about-us.html [R=301,L,NC]
+  RewriteRule ^contact(-us)?/?$ https://trucxpress.com/contact.html [R=301,L,NC]
+  RewriteRule ^blogs?/?$ https://trucxpress.com/blog.html [R=301,L,NC]
+  RewriteRule ^faqs?/?$ https://trucxpress.com/#faq [R=301,L,NC,NE]
+  RewriteRule ^home/?$ https://trucxpress.com/ [R=301,L,NC]
+  RewriteRule ^feed/?$ https://trucxpress.com/blog.html [R=301,L,NC]
+</IfModule>
+
 # TrucXpress — cache policy
 # HTML/CSS/JS always revalidate so deploys show up immediately;
 # fonts, images and 3D models are immutable and cache long.
