@@ -45,3 +45,7 @@ host's forms) for production.
 - 3D scenes pause when scrolled off-screen or when the tab is hidden.
 - WebGL failures degrade gracefully (static dark gradient background).
 - Pixel ratio capped at 2 to keep GPU cost sane on high-DPI phones.
+
+## Content pages
+
+Landing pages and blog posts are generated from `content/*.md` by `python3 tools/build.py`. See `SEO-PLAN.md` for the format and keyword map.

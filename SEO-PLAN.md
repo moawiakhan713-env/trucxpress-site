@@ -28,7 +28,7 @@ with real content on each page, not the same text with the city swapped.
 | Contact | truck dispatch Phoenix AZ | dispatch service Arizona, hire a truck dispatcher |
 | Blog | truck dispatch tips | owner operator tips, new authority tips |
 
-### Pages to add next (highest value first)
+### Landing pages (built 2026-11-07)
 
 | New page | Main keyword | Why |
 |---|---|---|
@@ -42,7 +42,7 @@ with real content on each page, not the same text with the city swapped.
 | `/hotshot-dispatch.html` | hotshot dispatch service | |
 | `/truck-dispatch-arizona.html` | truck dispatch Arizona | Local page backed by the Phoenix office. Add Texas, California, Georgia later. |
 
-## Blog topics (one keyword each)
+## Blog topics (all 12 written 2026-11-07, plus the 3 earlier posts)
 
 1. How much do truck dispatchers charge? (truck dispatcher fees)
 2. Dispatch percentage vs flat fee: which is cheaper for one truck?
@@ -76,8 +76,10 @@ Two posts a month is enough. Consistency matters more than volume.
    related post; equipment pages link to the matching blog posts.
 7. **Name the author.** "By Moawia Khan, Founder" with one line of experience
    builds trust with both carriers and Google.
-8. **Length:** 900 to 1,500 words for guides, 600 to 900 for equipment and
-   state pages. Never copy text between pages.
+8. **Length:** the current pages run 500 to 750 words, enough to answer each
+   question fully. Once Search Console shows which pages get impressions,
+   expand those to 900 to 1,500 words with more real examples. Never copy
+   text between pages.
 9. **Update** the date and facts on posts every 6 to 12 months.
 
 ## Steps only the owner can do (account access needed)
@@ -102,3 +104,15 @@ Two posts a month is enough. Consistency matters more than volume.
 They are automated outreach sent to almost every new domain. Do not pay
 anyone who cannot show which keywords they will target and what they will
 publish. Everything in this file can be done in-house.
+
+## Adding or editing a page
+
+All landing pages and blog posts live as text files in `content/`. To add a
+post, copy an existing `content/blog-*.md`, change the front matter (slug,
+title, description, author: founder, dispatcher or sales) and the text, then run:
+
+    python3 tools/build.py
+
+The script rebuilds every page, the blog listing, footer links, the guide
+links on the home and services pages, and sitemap.xml. Bylines: founder posts
+show "Moawia Khan, Founder & CEO"; dispatcher and sales posts show the team role.
