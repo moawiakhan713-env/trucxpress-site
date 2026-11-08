@@ -288,7 +288,10 @@ def head(title, desc, url, og_type, schemas):
   <meta name="theme-color" content="#04060d">
 {ld}
   <!-- /SEO -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffb31a'/%3E%3Cpath d='M7 21h10l2-7h6l-2 7h2m-16 0a2 2 0 104 0m8 0a2 2 0 104 0M7 14h9' stroke='%2314100a' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="assets/css/style.css?v={V}">
 </head>
 <body>
