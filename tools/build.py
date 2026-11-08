@@ -168,7 +168,7 @@ def render_body(md):
             else:
                 out.append(f'<p>{para}</p>')
     for f in faqs:
-        f['a_text'] = ' '.join(f['a'])
+        f['a_text'] = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', ' '.join(f['a'])).replace('**', '')
     return lede or '', '\n'.join(out), faqs, words
 
 
@@ -545,6 +545,24 @@ def refresh_sitemap():
     return len(rows)
 
 
+def clean_urls():
+    """Link pages without '.html' (trucxpress.com/contact, not /contact.html).
+    .htaccess serves /contact from contact.html and 301s the old .html URLs.
+    Runs last so templates and hand-written pages can keep plain file names."""
+    rel = re.compile(r'(href=")(?![a-z]+:|/|#)([a-z0-9-]+)\.html(#[^"]*)?"')
+    absu = re.compile(re.escape(SITE) + r'/([a-z0-9-]+)\.html')
+    def fix_rel(m):
+        name, frag = m.group(2), m.group(3) or ''
+        return f'{m.group(1)}/{"" if name == "index" else name}{frag}"'
+    def fix_abs(m):
+        return SITE + '/' + ('' if m.group(1) == 'index' else m.group(1))
+    for f in list(ROOT.glob('*.html')) + [ROOT / 'sitemap.xml']:
+        text = f.read_text(encoding='utf-8')
+        new = absu.sub(fix_abs, rel.sub(fix_rel, text))
+        if new != text:
+            f.write_text(new, encoding='utf-8')
+
+
 def main():
     pages = [parse(p) for p in sorted(CONTENT.glob('*.md'))]
     by_slug = {p['slug']: p for p in pages}
@@ -559,6 +577,7 @@ def main():
     refresh_guides(landings)
     refresh_footers(landings)
     n = refresh_sitemap()
+    clean_urls()
     print(f'built {len(pages)} pages ({len(landings)} landing, {len(posts)} posts), {total} words; sitemap {n} URLs')
 
 

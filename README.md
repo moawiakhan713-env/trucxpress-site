@@ -25,9 +25,14 @@ self-hosted — no CDNs, no external requests.
 ## Local preview
 
 ```bash
-python3 -m http.server 8080
+python3 tools/serve.py
 # open http://localhost:8080
 ```
+
+Pages have clean addresses (`/contact`, not `/contact.html`). On Hostinger,
+`.htaccess` serves `/contact` from `contact.html` and 301-redirects any old
+`.html` address to the clean one. `tools/serve.py` does the same locally; a
+plain `python3 -m http.server` would not, so links would 404 there.
 
 (A server is required because the 3D module uses ES-module imports; opening
 `index.html` via `file://` won't load them.)

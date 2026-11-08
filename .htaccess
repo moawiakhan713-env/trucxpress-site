@@ -10,15 +10,26 @@
   RewriteRule ^(.*)$ https://trucxpress.com/$1 [R=301,L]
 
   # pages that Google indexed on the old WordPress site
-  RewriteRule ^our-services/?$ https://trucxpress.com/our-services.html [R=301,L,NC]
-  RewriteRule ^services/?$ https://trucxpress.com/our-services.html [R=301,L,NC]
-  RewriteRule ^about-us/?$ https://trucxpress.com/about-us.html [R=301,L,NC]
-  RewriteRule ^about/?$ https://trucxpress.com/about-us.html [R=301,L,NC]
-  RewriteRule ^contact(-us)?/?$ https://trucxpress.com/contact.html [R=301,L,NC]
-  RewriteRule ^blogs?/?$ https://trucxpress.com/blog.html [R=301,L,NC]
+  RewriteRule ^services/?$ https://trucxpress.com/our-services [R=301,L,NC]
+  RewriteRule ^about/?$ https://trucxpress.com/about-us [R=301,L,NC]
+  RewriteRule ^contact-us/?$ https://trucxpress.com/contact [R=301,L,NC]
+  RewriteRule ^blogs/?$ https://trucxpress.com/blog [R=301,L,NC]
   RewriteRule ^faqs?/?$ https://trucxpress.com/#faq [R=301,L,NC,NE]
-  RewriteRule ^home/?$ https://trucxpress.com/ [R=301,L,NC]
-  RewriteRule ^feed/?$ https://trucxpress.com/blog.html [R=301,L,NC]
+  RewriteRule ^(home|feed)/?$ https://trucxpress.com/ [R=301,L,NC]
+
+  # clean URLs: /contact.html -> /contact, /index.html -> /
+  RewriteCond %{THE_REQUEST} \s/+index(\.html)?[\s?] [NC]
+  RewriteRule ^ https://trucxpress.com/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/+([a-z0-9-]+)\.html[\s?] [NC]
+  RewriteRule ^ https://trucxpress.com/%1 [R=301,L]
+  # no trailing slash on pages: /our-services/ -> /our-services
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^([a-z0-9-]+)/$ https://trucxpress.com/$1 [R=301,L,NC]
+  # serve /contact from contact.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^([a-z0-9-]+)$ $1.html [L]
 </IfModule>
 
 # TrucXpress — cache policy

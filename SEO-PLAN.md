@@ -32,15 +32,15 @@ with real content on each page, not the same text with the city swapped.
 
 | New page | Main keyword | Why |
 |---|---|---|
-| `/dispatch-for-new-authority.html` | dispatch for new authority | New MCs search this a lot and many dispatchers refuse them. TrucXpress takes them. |
-| `/dispatch-pricing.html` | how much do truck dispatchers charge | Buyers compare price before calling. Explain commission-only clearly. |
-| `/dry-van-dispatch.html` | dry van dispatch service | Equipment pages, one each. |
-| `/reefer-dispatch.html` | reefer dispatch service | |
-| `/flatbed-dispatch.html` | flatbed dispatch service | |
-| `/power-only-dispatch.html` | power only dispatch | |
-| `/box-truck-dispatch.html` | box truck dispatch service | Box truck owners are a big, underserved group. |
-| `/hotshot-dispatch.html` | hotshot dispatch service | |
-| `/truck-dispatch-arizona.html` | truck dispatch Arizona | Local page backed by the Phoenix office. Add Texas, California, Georgia later. |
+| `/dispatch-for-new-authority` | dispatch for new authority | New MCs search this a lot and many dispatchers refuse them. TrucXpress takes them. |
+| `/truck-dispatch-pricing` | how much do truck dispatchers charge | Buyers compare price before calling. Explain commission-only clearly. |
+| `/dry-van-dispatch` | dry van dispatch service | Equipment pages, one each. |
+| `/reefer-dispatch` | reefer dispatch service | |
+| `/flatbed-dispatch` | flatbed dispatch service | |
+| `/power-only-dispatch` | power only dispatch | |
+| `/box-truck-dispatch` | box truck dispatch service | Box truck owners are a big, underserved group. |
+| `/hotshot-dispatch` | hotshot dispatch service | |
+| `/truck-dispatch-arizona` | truck dispatch Arizona | Local page backed by the Phoenix office. Add Texas, California, Georgia later. |
 
 ## Blog topics (all 12 written 2026-11-07, plus the 3 earlier posts)
 
