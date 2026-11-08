@@ -1,5 +1,5 @@
 type: landing
-slug: hotshot-dispatch
+slug: services-hotshot
 group: equipment
 short: Hotshot Dispatch
 order: 16
@@ -14,7 +14,7 @@ equipment: Hotshot
 cta_label: Find hotshot loads
 cta_title: Fast loads for a fast setup
 cta_text: Tell us your trailer length, weight limit and location. We find loads that fit.
-related: flatbed-dispatch, blog-loads-with-new-mc-number, blog-spot-vs-contract-rates
+related: services-flatbed, blog-loads-with-new-mc-number, blog-spot-vs-contract-rates
 ---
 Hotshot trucking uses a heavy-duty pickup, usually a 3500, 4500 or 5500, pulling a gooseneck or bumper-pull flatbed trailer. Hotshots move smaller, time-sensitive loads that cannot wait for a full-size flatbed: a machine part for a stopped plant, equipment for a job site, or supplies for an oilfield crew.
 

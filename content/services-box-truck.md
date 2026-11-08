@@ -1,5 +1,5 @@
 type: landing
-slug: box-truck-dispatch
+slug: services-box-truck
 group: equipment
 short: Box Truck Dispatch
 order: 15

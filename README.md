@@ -11,7 +11,8 @@ self-hosted — no CDNs, no external requests.
   headlight beams, speed particles), equipment marquee, about preview with 3D
   floating cargo containers, services grid, how-it-works, animated stats,
   why-us, testimonials, CTA, contact form, footer.
-- `our-services.html` — full service catalog, equipment types, pricing model.
+- `services.html` (`/services`) — full service catalog, equipment types, pricing model.
+- `services-*.html` (`/services/flatbed`, `/services/reefer`, …) — one page per equipment type.
 - `about-us.html` — story, mission/vision, values, new-carrier support.
 
 ## Stack
@@ -29,7 +30,8 @@ python3 tools/serve.py
 # open http://localhost:8080
 ```
 
-Pages have clean addresses (`/contact`, not `/contact.html`). On Hostinger,
+Pages have clean addresses (`/contact`, not `/contact.html`; equipment pages
+live under `/services/`, e.g. `services-flatbed.html` is `/services/flatbed`). On Hostinger,
 `.htaccess` serves `/contact` from `contact.html` and 301-redirects any old
 `.html` address to the clean one. `tools/serve.py` does the same locally; a
 plain `python3 -m http.server` would not, so links would 404 there.

@@ -1,5 +1,5 @@
 type: landing
-slug: reefer-dispatch
+slug: services-reefer
 group: equipment
 short: Reefer Dispatch
 order: 11

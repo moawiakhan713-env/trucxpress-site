@@ -334,7 +334,7 @@ const GLB_LENGTH = 5.6;          // target tractor length in scene units
 const GLB_REAR_X = 0.9;          // where the tractor's rear lands (under trailer nose)
 
 function loadTractorGlb(url) {
-  const draco = new DRACOLoader().setDecoderPath('assets/vendor/draco/gltf/');
+  const draco = new DRACOLoader().setDecoderPath('/assets/vendor/draco/gltf/');
   draco.preload();
   const loader = new GLTFLoader().setDRACOLoader(draco);
   return new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject))
@@ -365,7 +365,7 @@ function loadTractorGlb(url) {
 }
 
 // start downloading the red tractor immediately, in parallel with scene setup
-const tractorPromise = loadTractorGlb('assets/models/truck.glb?v=5');
+const tractorPromise = loadTractorGlb('/assets/models/truck.glb?v=5');
 
 /* ============================================================
    The journey: sunset yard -> night dock grid -> numbered gates.

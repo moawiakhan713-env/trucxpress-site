@@ -11,7 +11,7 @@ popup: dispatch-today
 cta_label: Plan my Arizona reload
 cta_title: Delivering into Phoenix?
 cta_text: Tell us your delivery and ready time. We plan the outbound load before you are empty.
-related: truck-dispatch-arizona, dry-van-dispatch, blog-reduce-deadhead-miles
+related: truck-dispatch-arizona, services-dry-van, blog-reduce-deadhead-miles
 ---
 Our office is in Phoenix, so we see the same pattern every week: dry vans deliver into Arizona at a good rate, then sit at a truck stop wondering why everything going out pays so little. Here is how we plan around it.
 

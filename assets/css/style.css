@@ -399,6 +399,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
   opacity: 0; transform: translateY(8px); transition: opacity 0.35s, transform 0.35s var(--ease-out);
 }
 .equip-card:hover .equip-cta, .equip-card.is-hot .equip-cta, .equip-card:focus-visible .equip-cta { opacity: 1; transform: none; }
+@media (hover: none) { .equip-cta { opacity: 1; transform: none; } }
 
 /* blog cards: artwork icon lifts and glows */
 .post-card .post-art svg { transition: transform 0.5s var(--ease-out), filter 0.4s; }

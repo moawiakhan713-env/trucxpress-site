@@ -1,5 +1,5 @@
 type: landing
-slug: dry-van-dispatch
+slug: services-dry-van
 group: equipment
 short: Dry Van Dispatch
 order: 10

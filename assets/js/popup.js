@@ -246,7 +246,7 @@
     data.append('page', location.pathname);
     data.append('elapsed_ms', String(Date.now() - openedAt));
     const fields = readable(form);
-    fetch('send.php', { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+    fetch('/send.php', { method: 'POST', body: data, headers: { Accept: 'application/json' } })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((j) => (j && j.ok ? done('sent', fields) : Promise.reject('mail')))
       .catch(() => done('fallback', fields, title))

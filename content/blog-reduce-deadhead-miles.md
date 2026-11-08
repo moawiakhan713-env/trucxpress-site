@@ -10,7 +10,7 @@ popup: dispatch-today
 cta_label: Plan my next reload
 cta_title: Stop donating empty miles
 cta_text: Tell us where you deliver next and we will line up the reload before you are empty.
-related: blog-dry-van-lanes-arizona, blog-spot-vs-contract-rates, dry-van-dispatch
+related: blog-dry-van-lanes-arizona, blog-spot-vs-contract-rates, services-dry-van
 ---
 Every mile you run empty costs you fuel, hours of service and wear on the truck, and pays nothing. On our dispatch desk, cutting deadhead is the cheapest raise we can give a carrier.
 

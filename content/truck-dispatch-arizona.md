@@ -13,7 +13,7 @@ popup: hire
 cta_label: Hire an Arizona dispatcher
 cta_title: Running out of Arizona?
 cta_text: Tell us your home base and lanes and we will plan loads that bring you back with money in the truck.
-related: blog-dry-van-lanes-arizona, reefer-dispatch, dry-van-dispatch
+related: blog-dry-van-lanes-arizona, services-reefer, services-dry-van
 ---
 TrucXpress is based in Phoenix, at 4539 N 22nd St. We dispatch carriers across the United States, and we know the Arizona market from the inside: where the outbound freight is, which lanes pay to come home, and when the produce season changes everything.
 

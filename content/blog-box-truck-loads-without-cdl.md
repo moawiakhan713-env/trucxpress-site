@@ -12,7 +12,7 @@ equipment: Box Truck
 cta_label: Find box truck loads
 cta_title: Put your box truck to work
 cta_text: Tell us your truck size, lift gate and location. We find loads that fit.
-related: box-truck-dispatch, blog-loads-with-new-mc-number, blog-how-much-do-truck-dispatchers-charge
+related: services-box-truck, blog-loads-with-new-mc-number, blog-how-much-do-truck-dispatchers-charge
 ---
 A box truck is one of the most popular ways into trucking, partly because many can be driven without a commercial driver's license. "No CDL" does not mean "no rules," though. Here is what our sales team walks new box truck owners through before their first load.
 

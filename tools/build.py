@@ -49,7 +49,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'content'
 SITE = 'https://trucxpress.com'
 OG = SITE + '/assets/img/og-image.jpg'
-V = '9'  # asset cache-busting version
+V = '10'  # asset cache-busting version
 TODAY = date.today().isoformat()
 
 AUTHORS = {
@@ -174,7 +174,7 @@ def render_body(md):
 
 # ------------------------------------------------------------------ shared markup
 def nav(active):
-    items = [('index.html', 'Home'), ('our-services.html', 'Services'), ('about-us.html', 'About Us'),
+    items = [('index.html', 'Home'), ('services.html', 'Services'), ('about-us.html', 'About Us'),
              ('index.html#faq', 'FAQ'), ('blog.html', 'Blogs'), ('contact.html', 'Contact Us')]
     act = ' class="active"'
     links = '\n'.join(f'        <a href="{h}"{act if t == active else ""}>{t}</a>' for h, t in items)
@@ -195,7 +195,7 @@ def nav(active):
 
 
 def footer_columns(landings):
-    services = [('our-services.html', 'All Dispatch Services')] + [
+    services = [('services.html', 'All Dispatch Services')] + [
         (p['file'], p['short']) for p in landings if p.get('group') == 'service']
     equipment = [(p['file'], p['short']) for p in landings if p.get('group') == 'equipment']
     col = lambda title, links: (f'        <div>\n          <h4>{title}</h4>\n          <div class="footer-links">\n'
@@ -230,7 +230,7 @@ def footer(landings):
           <h4>Menu</h4>
           <div class="footer-links">
             <a href="index.html">Home</a>
-            <a href="our-services.html">Services</a>
+            <a href="services.html">Services</a>
             <a href="about-us.html">About Us</a>
             <a href="index.html#faq">FAQ</a>
             <a href="blog.html">Blogs</a>
@@ -351,7 +351,7 @@ def build_page(p, by_slug, landings):
     lede, body, faqs, words = render_body(p['body'])
     url = f'{SITE}/{p["file"]}'
     is_post = p['type'] == 'post'
-    crumb_name, crumb_url = ('Blog', 'blog.html') if is_post else ('Services', 'our-services.html')
+    crumb_name, crumb_url = ('Blog', 'blog.html') if is_post else ('Services', 'services.html')
     breadcrumb = {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': SITE + '/'},
         {'@type': 'ListItem', 'position': 2, 'name': crumb_name, 'item': f'{SITE}/{crumb_url}'},
@@ -516,7 +516,7 @@ def guide_links(landings):
 
 def refresh_guides(landings):
     block = guide_links(landings)
-    for name, anchor in (('index.html', 'id="load-types"'), ('our-services.html', 'WHAT WE OFFER')):
+    for name, anchor in (('index.html', 'id="load-types"'), ('services.html', 'WHAT WE OFFER')):
         f = ROOT / name
         s = f.read_text(encoding='utf-8')
         if '<!-- GUIDE-LINKS -->' in s:
@@ -533,7 +533,7 @@ def refresh_guides(landings):
 
 
 def refresh_sitemap():
-    prio = {'index.html': '1.0', 'our-services.html': '0.9', 'blog.html': '0.7', 'about-us.html': '0.6', 'contact.html': '0.6'}
+    prio = {'index.html': '1.0', 'services.html': '0.9', 'blog.html': '0.7', 'about-us.html': '0.6', 'contact.html': '0.6'}
     rows = []
     for f in sorted(ROOT.glob('*.html')):
         loc = SITE + '/' if f.name == 'index.html' else f'{SITE}/{f.name}'
@@ -545,20 +545,28 @@ def refresh_sitemap():
     return len(rows)
 
 
+def page_url(name):
+    """File stem -> public path: index -> '', services-flatbed -> services/flatbed."""
+    if name == 'index':
+        return ''
+    if name.startswith('services-'):
+        return 'services/' + name[len('services-'):]
+    return name
+
+
 def clean_urls():
-    """Link pages without '.html' (trucxpress.com/contact, not /contact.html).
-    .htaccess serves /contact from contact.html and 301s the old .html URLs.
+    """Link pages without '.html' (trucxpress.com/contact, /services/flatbed).
+    .htaccess maps those addresses back to the files and 301s the old ones.
+    Assets get root paths so pages under /services/ load them too.
     Runs last so templates and hand-written pages can keep plain file names."""
     rel = re.compile(r'(href=")(?![a-z]+:|/|#)([a-z0-9-]+)\.html(#[^"]*)?"')
     absu = re.compile(re.escape(SITE) + r'/([a-z0-9-]+)\.html')
-    def fix_rel(m):
-        name, frag = m.group(2), m.group(3) or ''
-        return f'{m.group(1)}/{"" if name == "index" else name}{frag}"'
-    def fix_abs(m):
-        return SITE + '/' + ('' if m.group(1) == 'index' else m.group(1))
+    asset = re.compile(r'((?:href|src)=")(?:\./)?assets/')
     for f in list(ROOT.glob('*.html')) + [ROOT / 'sitemap.xml']:
         text = f.read_text(encoding='utf-8')
-        new = absu.sub(fix_abs, rel.sub(fix_rel, text))
+        new = rel.sub(lambda m: f'{m.group(1)}/{page_url(m.group(2))}{m.group(3) or ""}"', text)
+        new = absu.sub(lambda m: f'{SITE}/{page_url(m.group(1))}', new)
+        new = asset.sub(r'\1/assets/', new).replace('"./assets/', '"/assets/')
         if new != text:
             f.write_text(new, encoding='utf-8')
 

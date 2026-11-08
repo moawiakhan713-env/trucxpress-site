@@ -1,5 +1,5 @@
 type: landing
-slug: power-only-dispatch
+slug: services-power-only
 group: equipment
 short: Power Only Dispatch
 order: 14

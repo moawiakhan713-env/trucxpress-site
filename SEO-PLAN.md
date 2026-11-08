@@ -23,7 +23,7 @@ with real content on each page, not the same text with the city swapped.
 | Page | Main keyword | Supporting keywords |
 |---|---|---|
 | Home `/` | truck dispatch services | dispatch services for owner operators, truck dispatcher for owner operators, commission truck dispatch |
-| Services | truck dispatching services | freight dispatch services, load booking service, carrier setup packets, broker vetting |
+| Services `/services` | truck dispatching services | freight dispatch services, load booking service, carrier setup packets, broker vetting |
 | About | truck dispatch company | carrier-first dispatch, dispatch company Phoenix |
 | Contact | truck dispatch Phoenix AZ | dispatch service Arizona, hire a truck dispatcher |
 | Blog | truck dispatch tips | owner operator tips, new authority tips |
@@ -34,12 +34,12 @@ with real content on each page, not the same text with the city swapped.
 |---|---|---|
 | `/dispatch-for-new-authority` | dispatch for new authority | New MCs search this a lot and many dispatchers refuse them. TrucXpress takes them. |
 | `/truck-dispatch-pricing` | how much do truck dispatchers charge | Buyers compare price before calling. Explain commission-only clearly. |
-| `/dry-van-dispatch` | dry van dispatch service | Equipment pages, one each. |
-| `/reefer-dispatch` | reefer dispatch service | |
-| `/flatbed-dispatch` | flatbed dispatch service | |
-| `/power-only-dispatch` | power only dispatch | |
-| `/box-truck-dispatch` | box truck dispatch service | Box truck owners are a big, underserved group. |
-| `/hotshot-dispatch` | hotshot dispatch service | |
+| `/services/dry-van` | dry van dispatch service | Equipment pages, one each. |
+| `/services/reefer` | reefer dispatch service | |
+| `/services/flatbed` | flatbed dispatch service | |
+| `/services/power-only` | power only dispatch | |
+| `/services/box-truck` | box truck dispatch service | Box truck owners are a big, underserved group. |
+| `/services/hotshot` | hotshot dispatch service | |
 | `/truck-dispatch-arizona` | truck dispatch Arizona | Local page backed by the Phoenix office. Add Texas, California, Georgia later. |
 
 ## Blog topics (all 12 written 2026-11-07, plus the 3 earlier posts)

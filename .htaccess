@@ -10,22 +10,28 @@
   RewriteRule ^(.*)$ https://trucxpress.com/$1 [R=301,L]
 
   # pages that Google indexed on the old WordPress site
-  RewriteRule ^services/?$ https://trucxpress.com/our-services [R=301,L,NC]
+  RewriteRule ^our-services/?$ https://trucxpress.com/services [R=301,L,NC]
   RewriteRule ^about/?$ https://trucxpress.com/about-us [R=301,L,NC]
   RewriteRule ^contact-us/?$ https://trucxpress.com/contact [R=301,L,NC]
   RewriteRule ^blogs/?$ https://trucxpress.com/blog [R=301,L,NC]
   RewriteRule ^faqs?/?$ https://trucxpress.com/#faq [R=301,L,NC,NE]
   RewriteRule ^(home|feed)/?$ https://trucxpress.com/ [R=301,L,NC]
+  # earlier addresses of the equipment pages: /flatbed-dispatch -> /services/flatbed
+  RewriteRule ^(dry-van|reefer|flatbed|step-deck|power-only|box-truck|hotshot)-dispatch(\.html)?/?$ https://trucxpress.com/services/$1 [R=301,L,NC]
 
-  # clean URLs: /contact.html -> /contact, /index.html -> /
+  # clean URLs: /index.html -> /, /services-flatbed.html -> /services/flatbed,
+  # /contact.html -> /contact
   RewriteCond %{THE_REQUEST} \s/+index(\.html)?[\s?] [NC]
   RewriteRule ^ https://trucxpress.com/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/+services-([a-z0-9-]+)(\.html)?[\s?] [NC]
+  RewriteRule ^ https://trucxpress.com/services/%1 [R=301,L]
   RewriteCond %{THE_REQUEST} \s/+([a-z0-9-]+)\.html[\s?] [NC]
   RewriteRule ^ https://trucxpress.com/%1 [R=301,L]
-  # no trailing slash on pages: /our-services/ -> /our-services
+  # no trailing slash on pages: /services/ -> /services
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^([a-z0-9-]+)/$ https://trucxpress.com/$1 [R=301,L,NC]
-  # serve /contact from contact.html
+  RewriteRule ^([a-z0-9/-]+)/$ https://trucxpress.com/$1 [R=301,L,NC]
+  # serve /services/flatbed from services-flatbed.html, /contact from contact.html
+  RewriteRule ^services/([a-z0-9-]+)$ services-$1.html [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}.html -f

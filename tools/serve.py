@@ -2,7 +2,8 @@
 
     python3 tools/serve.py        # then open http://localhost:8080
 
-/contact serves contact.html, like .htaccess does on Hostinger.
+/contact serves contact.html and /services/flatbed serves
+services-flatbed.html, like .htaccess does on Hostinger.
 (Forms do not send locally: there is no PHP here.)
 """
 import functools
@@ -17,6 +18,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def send_head(self):
         path = self.path.split('?', 1)[0].split('#', 1)[0]
         name = path.strip('/')
+        if name.startswith('services/'):
+            name = 'services-' + name[len('services/'):]
         if name and '/' not in name and '.' not in name and (ROOT / f'{name}.html').is_file():
             self.path = f'/{name}.html' + self.path[len(path):]
         return super().send_head()

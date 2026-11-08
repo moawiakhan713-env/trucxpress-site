@@ -11,7 +11,7 @@ popup: hire
 cta_label: Get a dispatcher who chases detention
 cta_title: Your time is worth money
 cta_text: We negotiate detention terms up front and document every hour you wait.
-related: blog-reefer-loads-what-pays, blog-carrier-setup-packet, power-only-dispatch
+related: blog-reefer-loads-what-pays, blog-carrier-setup-packet, services-power-only
 ---
 Waiting at a dock is unpaid driving time unless you claim it. Detention pay compensates carriers when a shipper or receiver keeps the truck longer than the free time allowed. Many carriers lose this money simply because nobody documented the wait. On our desk, detention is something we plan for before the load starts.
 

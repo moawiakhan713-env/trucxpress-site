@@ -12,7 +12,7 @@ equipment: Reefer
 cta_label: Find reefer loads
 cta_title: Run cold, run profitable
 cta_text: We read every reefer load's fine print before you accept it.
-related: reefer-dispatch, blog-detention-pay, truck-dispatch-arizona
+related: services-reefer, blog-detention-pay, truck-dispatch-arizona
 ---
 Reefer loads often pay more than dry van, but the rate on the board is only half the story. On our desk we judge reefer loads by the rate minus the time and risk they carry. Here is what we look for.
 

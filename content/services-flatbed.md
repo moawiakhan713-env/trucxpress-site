@@ -1,5 +1,5 @@
 type: landing
-slug: flatbed-dispatch
+slug: services-flatbed
 group: equipment
 short: Flatbed Dispatch
 order: 12
@@ -14,7 +14,7 @@ equipment: Flatbed
 cta_label: Find flatbed loads
 cta_title: Strap it down, we will find the next one
 cta_text: Tell us where you unload and when. Your dispatcher lines up the reload.
-related: step-deck-dispatch, blog-spot-vs-contract-rates, blog-reduce-deadhead-miles
+related: services-step-deck, blog-spot-vs-contract-rates, blog-reduce-deadhead-miles
 ---
 Flatbed pays for skill. Loading, securing and tarping open-deck freight takes experience, and the rates reflect it. The money disappears fast, though, when a load turns out to need tarps nobody mentioned, an oversize permit, or securement gear you do not carry. Our dispatchers get those details before you say yes.
 
@@ -55,7 +55,7 @@ We book oversize loads when your truck and experience fit them. We confirm who a
 No. Many flatbed loads fit a 48-foot deck. We filter loads by deck length and weight limit.
 
 ### Is a step deck better than a flatbed?
-They serve different loads. A step deck carries taller freight within legal height. See our [step deck dispatch](step-deck-dispatch.html) page for details.
+They serve different loads. A step deck carries taller freight within legal height. See our [step deck dispatch](services-step-deck.html) page for details.
 
 ### What securement gear should I carry?
 Most flatbedders carry chains and binders, 4-inch straps with winches, edge and corner protectors, coil racks or pads, dunnage, and a full set of tarps. Specific loads can need more, so we confirm requirements with the shipper first.

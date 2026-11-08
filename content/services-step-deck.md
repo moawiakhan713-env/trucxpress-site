@@ -1,5 +1,5 @@
 type: landing
-slug: step-deck-dispatch
+slug: services-step-deck
 group: equipment
 short: Step Deck Dispatch
 order: 13
@@ -14,7 +14,7 @@ equipment: Step Deck
 cta_label: Find step deck loads
 cta_title: Taller freight, better rates
 cta_text: Tell us your deck lengths and where you are. We find loads that fit.
-related: flatbed-dispatch, blog-spot-vs-contract-rates, blog-verify-freight-broker
+related: services-flatbed, blog-spot-vs-contract-rates, blog-verify-freight-broker
 ---
 A step deck, also called a drop deck, has an upper deck over the tractor and a lower main deck behind it. That lower deck lets you haul taller freight without an over-height permit. Fewer trucks can carry these loads than standard flatbed freight, which often means better rates for step deck carriers.
 

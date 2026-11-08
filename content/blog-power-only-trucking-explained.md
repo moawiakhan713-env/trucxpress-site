@@ -12,7 +12,7 @@ equipment: Power Only
 cta_label: Find power only loads
 cta_title: Tractor ready, no trailer?
 cta_text: We find power only programs that fit your authority and insurance.
-related: power-only-dispatch, blog-loads-with-new-mc-number, blog-detention-pay
+related: services-power-only, blog-loads-with-new-mc-number, blog-detention-pay
 ---
 Power only is the simplest way to put a tractor to work: you supply the truck and driver, and the shipper or logistics company supplies the trailer, usually already loaded. It has grown quickly, with large shippers and logistics platforms such as Amazon Relay running big power only programs. Our sales team gets more questions about it every month.
 
