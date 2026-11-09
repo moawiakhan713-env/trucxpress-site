@@ -12,7 +12,7 @@
   'use strict';
 
   const INBOX = 'info@trucxpress.com';
-  const PHONE = '+1 (928) 613-2787';
+  const PHONE = '+1 (313) 459-3803';
   const EQUIP = ['Dry Van', 'Reefer', 'Flatbed', 'Step Deck', 'Power Only', 'Box Truck', 'Hotshot'];
 
   const svg = (d) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -176,7 +176,7 @@
               <button type="submit" class="btn btn-primary">${esc(cfg.submit)}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
               </button>
-              <small>Prefer to talk? Call <a href="tel:+19286132787">${PHONE}</a></small>
+              <small>Prefer to talk? WhatsApp <a href="https://wa.me/13134593803" target="_blank" rel="noopener">${PHONE}</a></small>
             </div>
           </form>
         </div>
@@ -318,7 +318,7 @@
       <h2>One more click to send</h2>
       <p>Our form could not send this automatically. Pick how you email and your answers are already filled in, or copy them and send to <strong>${INBOX}</strong>.</p>
       ${pickHTML(mailLinks(INBOX, subject, body), 'Copy my answers')}
-      <p class="tx-call">${I.phone} Faster: call <a href="tel:+19286132787">${PHONE}</a></p>
+      <p class="tx-call">${I.phone} Faster: WhatsApp <a href="https://wa.me/13134593803" target="_blank" rel="noopener">${PHONE}</a></p>
       ${isLocal ? '<p class="tx-note">Preview note: the form only sends on the live website, not on a local copy.</p>' : ''}
       <textarea hidden data-copy-src>${esc(`To: ${INBOX}\nSubject: ${subject}\n\n${body}`)}</textarea>`;
   }

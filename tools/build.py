@@ -49,15 +49,19 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'content'
 SITE = 'https://trucxpress.com'
 OG = SITE + '/assets/img/og-image.jpg'
-V = '12'  # asset cache-busting version
+V = '13'  # asset cache-busting version
 TODAY = date.today().isoformat()
+
+FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/moawia-khan713'
 
 AUTHORS = {
     'founder': {
         'name': 'Moawia Khan', 'role': 'Founder & CEO, TrucXpress', 'initials': 'MK',
         'bio': 'Moawia Khan founded TrucXpress to give carriers a dispatch partner that only earns when they do. '
                'He oversees broker vetting, carrier onboarding and the dispatch team.',
+        'linkedin': FOUNDER_LINKEDIN,
         'schema': {'@type': 'Person', 'name': 'Moawia Khan', 'jobTitle': 'Founder & CEO',
+                   'url': SITE + '/about-us', 'sameAs': [FOUNDER_LINKEDIN],
                    'worksFor': {'@id': SITE + '/#business'}},
     },
     'dispatcher': {
@@ -208,7 +212,7 @@ def footer_columns(landings):
 FOOTER_TAIL = '''        <div>
           <h4>Contact</h4>
           <div class="footer-links">
-            <a href="tel:+19286132787">+1 (928) 613-2787</a>
+            <a href="https://wa.me/13134593803" target="_blank" rel="noopener">+1 (313) 459-3803</a>
             <a href="mailto:info@trucxpress.com">info@trucxpress.com</a>
             <a href="contact.html">Phoenix, AZ · Mansehra, PK</a>
           </div>
@@ -245,6 +249,8 @@ def refresh_socials_and_schema():
             if isinstance(node, dict) and node.get('@id') == SITE + '/#business' and 'legalName' in node:
                 node['sameAs'] = [u for _, u, _ in SOCIAL]
                 node['foundingDate'] = FOUNDING_DATE
+                if isinstance(node.get('founder'), dict):
+                    node['founder'].update({'jobTitle': 'Founder & CEO', 'sameAs': [FOUNDER_LINKEDIN]})
                 hit = True
         return m.group(1) + json.dumps(data, ensure_ascii=False) + m.group(3) if hit else m.group(0)
 
@@ -434,7 +440,7 @@ def build_page(p, by_slug, landings):
         </div>'''
         bottom_author = f'''        <div class="author-card">
           <span class="avatar">{a["initials"]}</span>
-          <div><span class="eyebrow-sm">Written by</span><strong>{html.escape(a["name"])}</strong><em>{html.escape(a["role"])}</em><p>{html.escape(a["bio"])}</p></div>
+          <div><span class="eyebrow-sm">Written by</span><strong>{html.escape(a["name"])}</strong><em>{html.escape(a["role"])}</em><p>{html.escape(a["bio"])}</p>{f'<a class="author-link" href="{a["linkedin"]}" target="_blank" rel="noopener">Connect on LinkedIn →</a>' if a.get("linkedin") else ''}</div>
         </div>'''
     else:
         chips = ''.join(f'<span>✓ {html.escape(h)}</span>' for h in p['highlights'])
@@ -444,7 +450,7 @@ def build_page(p, by_slug, landings):
         {f'<div class="hl-chips">{chips}</div>' if chips else ''}
         <div class="article-ctas">
           <a href="contact.html" class="btn btn-primary"{pop}>{html.escape(cta_label)} {ARROW}</a>
-          <a href="tel:+19286132787" class="btn btn-ghost">Call +1 (928) 613-2787</a>
+          <a href="https://wa.me/13134593803" class="btn btn-ghost" target="_blank" rel="noopener">WhatsApp +1 (313) 459-3803</a>
         </div>'''
         bottom_author = ''
 

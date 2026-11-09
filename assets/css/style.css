@@ -1079,3 +1079,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.12; letter-spa
   .marquee-track, .grain, .step-line .spark, .scroll-hint .wheel::after, .hero-eyebrow .dot { animation: none !important; }
   * { transition-duration: 0.01ms !important; }
 }
+
+.author-card .author-link { display: inline-block; margin-top: 10px; font-size: 0.86rem; font-weight: 600; color: var(--amber); }
+.author-card .author-link:hover { text-decoration: underline; }
