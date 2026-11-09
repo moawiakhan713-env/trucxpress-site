@@ -49,7 +49,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'content'
 SITE = 'https://trucxpress.com'
 OG = SITE + '/assets/img/og-image.jpg'
-V = '11'  # asset cache-busting version
+V = '12'  # asset cache-busting version
 TODAY = date.today().isoformat()
 
 AUTHORS = {
@@ -215,6 +215,46 @@ FOOTER_TAIL = '''        <div>
         </div>'''
 
 
+# Official profiles: shown as icons on every page and listed in the
+# business schema (sameAs) so Google ties them to this company.
+SOCIAL = [
+    ('LinkedIn', 'https://www.linkedin.com/company/trucxpress',
+     '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>'),
+    ('Facebook', 'https://www.facebook.com/profile.php?id=61571892994215',
+     '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>'),
+]
+FOUNDING_DATE = '2025-06-10'
+
+
+def socials_html():
+    links = ''.join(f'<a href="{html.escape(u)}" aria-label="TrucXpress on {n}" target="_blank" rel="noopener">{icon}</a>'
+                    for n, u, icon in SOCIAL)
+    return f'<div class="socials">{links}</div>'
+
+
+def refresh_socials_and_schema():
+    """Same social icons everywhere; business schema gets sameAs + foundingDate."""
+    block = re.compile(r'<div class="socials">.*?</div>', re.S)
+    ld = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
+
+    def fix_ld(m):
+        data = json.loads(m.group(2))
+        nodes = data.get('@graph', [data]) if isinstance(data, dict) else data
+        hit = False
+        for node in nodes:
+            if isinstance(node, dict) and node.get('@id') == SITE + '/#business' and 'legalName' in node:
+                node['sameAs'] = [u for _, u, _ in SOCIAL]
+                node['foundingDate'] = FOUNDING_DATE
+                hit = True
+        return m.group(1) + json.dumps(data, ensure_ascii=False) + m.group(3) if hit else m.group(0)
+
+    for f in ROOT.glob('*.html'):
+        text = f.read_text(encoding='utf-8')
+        new = ld.sub(fix_ld, block.sub(lambda m: socials_html(), text))
+        if new != text:
+            f.write_text(new, encoding='utf-8')
+
+
 def footer(landings):
     return f'''  <footer class="footer">
     <div class="container">
@@ -225,6 +265,7 @@ def footer(landings):
             <span class="logo-script">TrucXpress</span>
           </a>
           <p>Where Logistics Meets Reliability. Commission-only freight dispatch backed by 24/7 tech &amp; support.</p>
+          {socials_html()}
         </div>
         <div>
           <h4>Menu</h4>
@@ -587,6 +628,7 @@ def main():
     refresh_blog(posts)
     refresh_guides(landings)
     refresh_footers(landings)
+    refresh_socials_and_schema()
     n = refresh_sitemap()
     clean_urls()
     print(f'built {len(pages)} pages ({len(landings)} landing, {len(posts)} posts), {total} words; sitemap {n} URLs')

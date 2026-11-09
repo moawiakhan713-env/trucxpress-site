@@ -94,7 +94,7 @@ Two posts a month is enough. Consistency matters more than volume.
    Same name, address and phone as the website, category "Trucking company" or
    "Logistics service", and ask happy carriers for reviews.
 3. **Bing Webmaster Tools**: import from Search Console in one click.
-4. **Consistent listings**: Facebook page, LinkedIn company page, and trucking
+4. **Consistent listings** (LinkedIn and Facebook added to the site and schema 2026-11-09; Instagram pending): Facebook page, LinkedIn company page, and trucking
    directories, all with the exact same name, address and phone number. Then
    send the profile URLs so they can be added to the site and to the schema
    (`sameAs`).
