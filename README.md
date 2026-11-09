@@ -65,6 +65,13 @@ email app set up.
 
 ## Accessibility & performance
 
+- Only the home page loads Three.js. The page-hero starfield on other pages is
+  CSS; the route map (home, About) loads when it scrolls near.
+- Two variable fonts with metric-matched fallbacks (no layout shift on swap),
+  preloaded on every page.
+- The truck model is preloaded with the exact URL the loader uses (`?m=N`);
+  keep the two in sync or it downloads twice.
+
 - `prefers-reduced-motion` disables all animation.
 - 3D scenes pause when scrolled off-screen or when the tab is hidden.
 - WebGL failures degrade gracefully (static dark gradient background).

@@ -30,12 +30,14 @@
   <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <script type="importmap">{ "imports": { "three": "/assets/vendor/three.module.min.js" } }</script>
-  <link rel="preload" href="/assets/models/truck.glb?v=13" as="fetch" crossorigin>
+  <link rel="preload" href="/assets/models/truck.glb?m=6" as="fetch" crossorigin>
   <link rel="preload" href="/assets/vendor/draco/gltf/draco_decoder.wasm" as="fetch" crossorigin>
   <link rel="modulepreload" href="/assets/vendor/three.module.min.js">
   <link rel="modulepreload" href="/assets/vendor/three.core.min.js">
-  <link rel="modulepreload" href="/assets/js/hero-cinematic.js?v=13">
-  <link rel="stylesheet" href="/assets/css/style.css?v=13">
+  <link rel="modulepreload" href="/assets/js/hero-cinematic.js?v=14">
+  <link rel="preload" href="/assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/style.css?v=14">
 </head>
 <body>
   <div class="page-glow"></div>
@@ -459,15 +461,21 @@
   </button>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="/assets/vendor/gsap.min.js?v=13"></script>
-  <script src="/assets/vendor/ScrollTrigger.min.js?v=13"></script>
-  <script src="/assets/js/main.js?v=13"></script>
-  <script src="/assets/js/popup.js?v=13"></script>
+  <script src="/assets/vendor/gsap.min.js?v=14"></script>
+  <script src="/assets/vendor/ScrollTrigger.min.js?v=14"></script>
+  <script src="/assets/js/main.js?v=14"></script>
+  <script src="/assets/js/popup.js?v=14"></script>
   <script type="module">
-    import { initCargoScene } from './assets/js/scene.js?v=13';
-    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=13';
+    import { initCinematicHero } from './assets/js/hero-cinematic.js?v=14';
     try { initCinematicHero(document.getElementById('hero-canvas')); } catch (e) { console.warn('WebGL hero disabled:', e); }
-    try { initCargoScene(document.getElementById('cargo-canvas')); } catch (e) { console.warn('WebGL cargo visual disabled:', e); }
+    /* the route map further down loads only when it nears the screen */
+    const map = document.getElementById('cargo-canvas');
+    if (map) {
+      const go = () => import('./assets/js/scene.js?v=14').then((m) => m.initCargoScene(map))
+        .catch((e) => console.warn('WebGL cargo visual disabled:', e));
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '400px' });
+      io.observe(map);
+    }
   </script>
 </body>
 </html>

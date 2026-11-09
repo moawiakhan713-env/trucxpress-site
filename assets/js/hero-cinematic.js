@@ -365,7 +365,7 @@ function loadTractorGlb(url) {
 }
 
 // start downloading the red tractor immediately, in parallel with scene setup
-const tractorPromise = loadTractorGlb('/assets/models/truck.glb?v=5');
+const tractorPromise = loadTractorGlb('/assets/models/truck.glb?m=6');
 
 /* ============================================================
    The journey: sunset yard -> night dock grid -> numbered gates.
