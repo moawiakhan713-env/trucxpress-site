@@ -1,23 +1,12 @@
 {
   "name": "trucxpress-site",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "TrucXpress website. Static files; the only build step bundles the home-page 3D hero.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "esbuild src/hero.js --bundle --format=esm --minify --target=es2020 --legal-comments=none --outfile=assets/js/hero.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://local_proxy@127.0.0.1:41729/git/moawiakhan713-env/trucxpress-site"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/space-grotesk": "^5.2.10",
-    "gsap": "^3.15.0",
-    "playwright-core": "^1.61.1",
-    "three": "^0.185.1"
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "three": "0.185.1"
   }
 }

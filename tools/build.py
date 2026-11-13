@@ -49,7 +49,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'content'
 SITE = 'https://trucxpress.com'
 OG = SITE + '/assets/img/og-image.jpg'
-V = '14'  # asset cache-busting version
+V = '15'  # asset cache-busting version
 TODAY = date.today().isoformat()
 
 FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/moawia-khan713'
@@ -298,8 +298,6 @@ def footer(landings):
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 19V5m-6 6 6-6 6 6"/></svg>
   </button>
 
-  <script src="assets/vendor/gsap.min.js?v={V}"></script>
-  <script src="assets/vendor/ScrollTrigger.min.js?v={V}"></script>
   <script src="assets/js/main.js?v={V}"></script>
   <script src="assets/js/popup.js?v={V}"></script>
 </body>

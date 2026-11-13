@@ -1,6 +1,6 @@
 /* ============================================================
    TRUCXPRESS — interactions & scroll animation
-   Requires: gsap.min.js + ScrollTrigger.min.js loaded first.
+   The home page also loads gsap + ScrollTrigger for the pinned hero.
    ============================================================ */
 (function () {
   'use strict';
@@ -56,57 +56,32 @@
     card.addEventListener('pointerleave', () => { card.style.transform = ''; });
   });
 
-  /* ---- GSAP scroll animations ---- */
+  /* ---- scroll reveals (the motion itself is CSS: .in in style.css) ---- */
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      revealIO.unobserve(e.target);
+      if (e.target.hasAttribute('data-stagger')) {
+        Array.from(e.target.children).forEach((c, i) => { c.style.animationDelay = i * 0.1 + 's'; c.classList.add('in'); });
+      } else e.target.classList.add('in');
+    });
+  // the huge top margin also catches anything a fast scroll or an anchor jump skipped past
+  }, { rootMargin: '100000px 0px -12% 0px' });
+  document.querySelectorAll('.reveal, .reveal-l, .reveal-r, [data-stagger]').forEach((el) => revealIO.observe(el));
+
+  /* ---- home hero: pinned scroll story (GSAP is loaded on the home page only) ---- */
   if (window.gsap && window.ScrollTrigger && !REDUCED) {
     gsap.registerPlugin(ScrollTrigger);
-    // keep tween clocks tied to real time so intros finish even when the
-    // GPU is slow (software WebGL) and the frame rate drops
+    // keep tween clocks tied to real time so the scrub stays in step even
+    // when the GPU is slow and the frame rate drops
     gsap.ticker.lagSmoothing(0);
 
-    // hero intro
-    const heroBits = document.querySelectorAll('.hero [data-hero], .page-hero [data-hero]');
-    if (heroBits.length) {
-      gsap.fromTo(heroBits,
-        { y: 46, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.1, stagger: 0.13, ease: 'power3.out', delay: 0.15 }
-      );
-    }
-
-    // generic reveals
-    document.querySelectorAll('.reveal').forEach((el) => {
-      gsap.to(el, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 86%' },
-      });
-    });
-    document.querySelectorAll('.reveal-l').forEach((el) => {
-      gsap.to(el, {
-        opacity: 1, x: 0, duration: 1.1, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 84%' },
-      });
-    });
-    document.querySelectorAll('.reveal-r').forEach((el) => {
-      gsap.to(el, {
-        opacity: 1, x: 0, duration: 1.1, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 84%' },
-      });
-    });
-
-    // staggered grids
-    document.querySelectorAll('[data-stagger]').forEach((grid) => {
-      gsap.fromTo(grid.children,
-        { y: 54, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.9, stagger: 0.12, ease: 'power3.out',
-          scrollTrigger: { trigger: grid, start: 'top 82%' },
-        }
-      );
-    });
-
     // cinematic pinned hero: scrub progress feeds the 3D scene via
-    // window.__heroP; text phases crossfade along the same timeline
+    // window.__heroP; text phases crossfade along the same timeline.
+    // Data-saver visitors keep the still poster and a normal, unpinned hero.
     const cine = document.querySelector('.hero[data-cinematic]');
-    if (cine) {
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    if (cine && !saveData) {
       window.__heroP = 0;
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -124,47 +99,18 @@
         .to('.hero-phase.p2', { autoAlpha: 0, y: -70, duration: 0.09, ease: 'power1.in' }, 0.49)
         .fromTo('.hero-phase.p3', { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: 'power2.out' }, 0.74)
         .to('.hero-phase.p3', { autoAlpha: 0, duration: 0.08 }, 0.92);
+
+      // the 3D scene itself (bundled from src/hero.js). It starts once the page
+      // has loaded and painted, so it never delays the headline; the poster
+      // still covers the wait and simply stays if the scene fails.
+      const start3D = () => setTimeout(() => {
+        import(cine.dataset.cinematic)
+          .then((m) => m.initCinematicHero(cine.querySelector('.hero-canvas')))
+          .catch((e) => console.warn('3D hero disabled:', e));
+      }, 150);
+      if (document.readyState === 'complete') start3D();
+      else window.addEventListener('load', start3D, { once: true });
     }
-
-    // parallax drift on decorated elements
-    document.querySelectorAll('[data-parallax]').forEach((el) => {
-      const depth = parseFloat(el.dataset.parallax) || 0.15;
-      gsap.to(el, {
-        yPercent: depth * -100, ease: 'none',
-        scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
-      });
-    });
-  } else {
-    // reduced motion / no gsap: show everything
-    document.querySelectorAll('.reveal, .reveal-l, .reveal-r, [data-stagger] > *').forEach((el) => {
-      el.style.opacity = 1;
-      el.style.transform = 'none';
-    });
-  }
-
-  /* ---- animated counters ---- */
-  const counters = document.querySelectorAll('[data-count]');
-  if (counters.length) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const el = entry.target;
-        io.unobserve(el);
-        const target = parseFloat(el.dataset.count);
-        const decimals = (el.dataset.count.split('.')[1] || '').length;
-        const dur = 1800;
-        const t0 = performance.now();
-        const fmt = (v) => decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString('en-US');
-        if (REDUCED) { el.textContent = fmt(target); return; }
-        (function tick(now) {
-          const p = Math.min((now - t0) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = fmt(target * eased);
-          if (p < 1) requestAnimationFrame(tick);
-        })(t0);
-      });
-    }, { threshold: 0.5 });
-    counters.forEach((el) => io.observe(el));
   }
 
   /* ---- How It Works: route truck, step states, tilt cards ---- */

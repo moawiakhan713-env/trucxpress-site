@@ -1,27 +1,31 @@
-# TrucXpress — 3D Website Redesign
+# TrucXpress website
 
-Dark-premium redesign of [trucxpress.com](https://trucxpress.com) as a fast,
-standalone static site (no WordPress/Elementor). Real-time 3D built with
-Three.js, scroll animation with GSAP ScrollTrigger. All libraries and fonts are
-self-hosted — no CDNs, no external requests.
+Static site for [trucxpress.com](https://trucxpress.com): plain HTML, CSS and
+JavaScript, self-hosted fonts, no CDNs and no external requests. Upload the
+site files to `public_html` on Hostinger.
 
 ## Pages
 
-- `index.html` — Home: 3D night-highway hero (animated semi truck, moving lanes,
-  headlight beams, speed particles), equipment marquee, about preview with 3D
-  floating cargo containers, services grid, how-it-works, animated stats,
-  why-us, testimonials, CTA, contact form, footer.
+- `index.html` — Home: one-screen hero with a scroll-driven 3D truck scene,
+  live load tracker, equipment cards, US route map, how-it-works, FAQ, contact form.
 - `services.html` (`/services`) — full service catalog, equipment types, pricing model.
 - `services-*.html` (`/services/flatbed`, `/services/reefer`, …) — one page per equipment type.
-- `about-us.html` — story, mission/vision, values, new-carrier support.
+- `about-us.html`, `contact.html`, `blog.html`, `blog-*.html`, and the guide pages.
 
-## Stack
+## What loads where
 
-- **Three.js** (`assets/vendor/three.module.min.js`) — 3D scenes in `assets/js/scene.js`
-- **GSAP + ScrollTrigger** (`assets/vendor/`) — scroll reveals, counters in `assets/js/main.js`
-- **Space Grotesk / Inter** — self-hosted woff2 in `assets/fonts/`
-- Pure static HTML/CSS/JS — host anywhere (Cloudflare Pages, Netlify, Vercel,
-  GitHub Pages, or any web host). No build step required.
+| File | Used by | What it is |
+|---|---|---|
+| `assets/css/style.css` | every page | all styles |
+| `assets/js/main.js` | every page | nav, scroll reveals, cards, load tracker, starts the home hero |
+| `assets/js/popup.js` | every page | request popups, contact form, email chooser |
+| `assets/js/route-map.js` | home, About | US route map, plain 2D canvas |
+| `assets/vendor/gsap*.js` | home only | pinned scroll for the hero |
+| `assets/js/hero.js` | home only | 3D hero. **Built file**: edit `src/hero.js`, then `npm install && npm run build` |
+| `assets/models/truck.glb`, `assets/vendor/draco/` | home only | truck model and its decoder |
+| `assets/img/hero-poster-*.webp` | home only | still of the hero's first frame, shown until the 3D is ready |
+
+Inner pages load no 3D library and no GSAP.
 
 ## Local preview
 
@@ -65,17 +69,16 @@ email app set up.
 
 ## Accessibility & performance
 
-- Only the home page loads Three.js. The page-hero starfield on other pages is
-  CSS; the route map (home, About) loads when it scrolls near.
-- Two variable fonts with metric-matched fallbacks (no layout shift on swap),
-  preloaded on every page.
+- The home hero is exactly one screen tall and paints a poster of the first 3D
+  frame immediately; the 3D starts after the page has loaded and fades in over
+  it. Three camera layouts (wide, mid, tall) keep the whole truck in view; the
+  breakpoints live in both `style.css` (posters) and `src/hero.js` (camera).
+  If the opening shot changes, re-render the three posters.
+- Visitors with reduced motion or data saver get the poster only, no 3D download.
 - The truck model is preloaded with the exact URL the loader uses (`?m=N`);
   keep the two in sync or it downloads twice.
-
-- `prefers-reduced-motion` disables all animation.
-- 3D scenes pause when scrolled off-screen or when the tab is hidden.
-- WebGL failures degrade gracefully (static dark gradient background).
-- Pixel ratio capped at 2 to keep GPU cost sane on high-DPI phones.
+- Two variable fonts with metric-matched fallbacks (no layout shift on swap).
+- Animations pause off-screen and when the tab is hidden.
 
 ## Content pages
 

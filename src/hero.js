@@ -5,15 +5,31 @@
    and a camera that sweeps through three phases driven by the
    pinned-scroll progress that main.js writes to window.__heroP.
 
-   Drop a photoreal model at assets/models/truck.glb and it is
-   used automatically in place of the procedural truck.
+   The tractor is assets/models/truck.glb; the trailer and the
+   rest of the scene are built in code.
+
+   This is the SOURCE. The site loads the bundled, minified copy
+   at assets/js/hero.js: run `npm run build` after editing.
+
+   Until the scene is ready the page shows a still of the first
+   frame (assets/img/hero-poster-*.webp, the .hero-canvas CSS
+   background); the canvas then fades in over it.
    ============================================================ */
 import * as THREE from 'three';
-import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { GLTFLoader } from '../vendor/GLTFLoader.js';
-import { DRACOLoader } from '../vendor/DRACOLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// phones get half-size painted textures: same look at that screen size,
+// a quarter of the memory and upload time
+const TEX = window.innerWidth < 800 ? 0.5 : 1;
+function paintCanvas(w, h) {
+  const c = document.createElement('canvas');
+  c.width = w * TEX; c.height = h * TEX;
+  const g = c.getContext('2d');
+  g.scale(TEX, TEX);
+  return [c, g];
+}
 
 /* ---------- helpers ---------- */
 function radialGlowTexture(inner, outer) {
@@ -25,14 +41,16 @@ function radialGlowTexture(inner, outer) {
   grad.addColorStop(1, outer);
   g.fillStyle = grad;
   g.fillRect(0, 0, 256, 256);
+  // ease the alpha out (a straight-line falloff shows a ring where the glow ends)
+  const img = g.getImageData(0, 0, 256, 256);
+  for (let i = 3; i < img.data.length; i += 4) img.data[i] = (img.data[i] / 255) ** 1.5 * 255;
+  g.putImageData(img, 0, 0);
   return new THREE.CanvasTexture(c);
 }
 
 function trailerSideTexture(mirror) {
   const W = 2048, H = 512;
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const g = c.getContext('2d');
+  const [c, g] = paintCanvas(W, H);
 
   g.fillStyle = '#c9cfda';
   g.fillRect(0, 0, W, H);
@@ -97,9 +115,7 @@ function contactShadowTexture() {
 
 function dockGridTexture() {
   const S = 1024;
-  const c = document.createElement('canvas');
-  c.width = c.height = S;
-  const g = c.getContext('2d');
+  const [c, g] = paintCanvas(S, S);
   g.fillStyle = '#070a12';
   g.fillRect(0, 0, S, S);
   const N = 7, cell = S / N, gap = 10;
@@ -124,9 +140,7 @@ function dockGridTexture() {
 
 function gatesTexture() {
   const W = 4096, H = 1024;
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const g = c.getContext('2d');
+  const [c, g] = paintCanvas(W, H);
   // warm wall
   const wall = g.createLinearGradient(0, 0, 0, H);
   wall.addColorStop(0, '#d99976');
@@ -168,8 +182,8 @@ function gatesTexture() {
   return t;
 }
 
-/* ---------- procedural semi (tractor is swapped for the GLB) ---------- */
-function buildTruck(env) {
+/* ---------- procedural semi (its cab is only the fallback if the GLB fails) ---------- */
+function buildTruck() {
   const truck = new THREE.Group();
   const trailerG = new THREE.Group();
   trailerG.scale.setScalar(0.86);   // keep the box proportional to the tractor
@@ -196,8 +210,7 @@ function buildTruck(env) {
     new THREE.BoxGeometry(TL, TH, TW),
     [trailerWhite, trailerWhite, trailerWhite, darkTrim, trailerSide, trailerSideM]
   );
-  trailer.position.set(-1.6, 1.62 + TH / 2 - 1.05, 0);
-  trailer.position.y = 1.05 + TH / 2;
+  trailer.position.set(-1.6, 1.05 + TH / 2, 0);
   trailerG.add(trailer);
 
   // side skirts + underride
@@ -266,12 +279,10 @@ function buildTruck(env) {
   bumper.position.set(2.28, 0.78, 0);
   tractor.add(bumper);
   const lightMat = new THREE.MeshBasicMaterial({ color: 0xfff2cc });
-  const headlights = [];
   for (const z of [0.72, -0.72]) {
     const hl = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.3), lightMat);
     hl.position.set(2.3, 1.05, z);
     tractor.add(hl);
-    headlights.push(hl);
   }
   for (const z of [0.62, -0.62]) {
     const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 1.5, 20), chrome);
@@ -325,7 +336,7 @@ function buildTruck(env) {
     trailerG.add(t);
   }
 
-  return { truck, tractor, tractorRolling, trailerWheels, tractorWheels, headlights };
+  return { truck, tractor, tractorRolling, trailerWheels, tractorWheels };
 }
 
 /* ---------- photoreal tractor GLB (assets/models/truck.glb) ---------- */
@@ -364,8 +375,9 @@ function loadTractorGlb(url) {
     });
 }
 
-// start downloading the red tractor immediately, in parallel with scene setup
-const tractorPromise = loadTractorGlb('/assets/models/truck.glb?m=6');
+// start downloading the red tractor immediately, in parallel with scene setup.
+// The URL must match the <link rel="preload"> in index.html exactly.
+const tractorPromise = loadTractorGlb('/assets/models/truck.glb?m=7');
 
 /* ============================================================
    The journey: sunset yard -> night dock grid -> numbered gates.
@@ -373,10 +385,17 @@ const tractorPromise = loadTractorGlb('/assets/models/truck.glb?m=6');
    and the camera through six keyframed shots while sky, fog and
    light palettes crossfade between zones.
    ============================================================ */
-export function initCinematicHero(container) {
+export async function initCinematicHero(container) {
+  // the trailer and gate lettering is painted with the site font, so wait for it
+  // (it is preloaded; the timeout only guards against a font that never arrives)
+  await Promise.race([
+    document.fonts.load('700 100px "Space Grotesk"'),
+    new Promise((r) => setTimeout(r, 1500)),
+  ]);
+
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -427,7 +446,7 @@ export function initCinematicHero(container) {
   sunGlow.position.set(26, 7, -70);
   scene.add(sunGlow);
   const sunCore = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: radialGlowTexture('rgba(255,255,245,1)', 'rgba(255,220,150,0)'),
+    map: radialGlowTexture('rgba(255,246,220,1)', 'rgba(255,220,150,0)'),
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   }));
   sunCore.scale.set(16, 16, 1);
@@ -532,7 +551,11 @@ export function initCinematicHero(container) {
   proc.truck.remove(proc.tractorRolling);
   let rigShown = false;
   blob.visible = false;
-  const showRig = () => { rigShown = true; rig.visible = true; blob.visible = true; };
+  const showRig = () => {
+    rigShown = true; rig.visible = true; blob.visible = true;
+    // two frames later the truck is on the canvas: fade it in over the poster
+    requestAnimationFrame(() => requestAnimationFrame(() => container.classList.add('is-live')));
+  };
   const useFallbackCab = () => {
     if (rigShown) return;
     proc.truck.add(proc.tractor, proc.tractorRolling);
@@ -553,13 +576,14 @@ export function initCinematicHero(container) {
     mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
 
-  window.addEventListener('resize', () => {
+  // follow the container, not the window: pinning and font loading resize it too
+  new ResizeObserver(() => {
     const w = container.clientWidth, h = container.clientHeight;
     if (!w || !h) return;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  });
+    renderer.setSize(w, h, false);
+  }).observe(container);
 
   /* ---- journey definition ---- */
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -567,9 +591,22 @@ export function initCinematicHero(container) {
   const TRUCK_END = 118;
   const truckX = (p) => TRUCK_END * smooth(clamp01((p - 0.16) / 0.66));
 
+  // Opening shot, one per screen shape so the whole truck is in view beside or
+  // below the headline: wide screens park it on the right, mid screens centre
+  // it under the copy, tall screens (phones) get a front three-quarter view.
+  // Same breakpoints as the poster stills in style.css.
+  const OPEN = {
+    wide: { pos: [-1.9, 2.7, 23.5], look: [-3.9, 5.3, 0] },
+    mid:  { pos: [0.4, 2.7, 23],    look: [-1.6, 5.2, 0] },
+    tall: { pos: [31.4, 2.4, 12.5], look: [2, 6.45, 0] },
+  };
+  const mqWide = window.matchMedia('(min-aspect-ratio: 17/10)');
+  const mqTall = window.matchMedia('(max-aspect-ratio: 6/5)');
+  const open = () => OPEN[mqWide.matches ? 'wide' : mqTall.matches ? 'tall' : 'mid'];
+
   // keyframed shots; positions may reference the truck (tx)
   const SHOTS = [
-    { p: 0.00, fov: 33, pos: (tx) => [1.2, 2.7, 21.8],            look: (tx) => [-2.0, 3.55, 0] },
+    { p: 0.00, fov: 33, pos: () => open().pos,                    look: () => open().look },
     { p: 0.24, fov: 32, pos: (tx) => [tx + 10, 1.9, 14.5],        look: (tx) => [tx + 2, 2.2, 0] },
     { p: 0.50, fov: 38, pos: (tx) => [tx - 5, 30, 5],             look: (tx) => [tx + 8, 0, -1] },
     { p: 0.70, fov: 32, pos: (tx) => [tx + 15, 2.8, 13.5],        look: (tx) => [tx + 2.5, 2.6, -2] },
@@ -590,7 +627,7 @@ export function initCinematicHero(container) {
 
   const tPos = new THREE.Vector3(), tLook = new THREE.Vector3();
   let pSm = 0, prevX = 0;
-  const clock = new THREE.Clock();
+  let last = performance.now(), t = 0;
   let rafId = null;
 
   // stop burning GPU once the hero is scrolled out of view
@@ -602,10 +639,12 @@ export function initCinematicHero(container) {
 
   function frame() {
     if (document.hidden || !onScreen) { rafId = null; return; }
-    const dt = Math.min(clock.getDelta(), 0.05);
-    const t = clock.elapsedTime;
+    const now = performance.now();
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    t += dt;
 
-    const p = REDUCED ? 0 : (window.__heroP || 0);
+    const p = window.__heroP || 0;
     pSm += (p - pSm) * Math.min(6 * dt, 1);
 
     // truck along the path
@@ -667,7 +706,7 @@ export function initCinematicHero(container) {
     sun.position.set(26 + tx * 0.9, 8, -40);
 
     // wheels + idle bob
-    const wheelSpeed = REDUCED ? 0 : Math.max(speed, 1.6 * w0);
+    const wheelSpeed = Math.max(speed, 1.6 * w0);
     for (const w of wheels) w.rotation.z -= (wheelSpeed * dt) / 0.53;
     rig.position.y = Math.sin(t * 7) * 0.008 * (1 + Math.min(speed * 0.08, 2));
 
